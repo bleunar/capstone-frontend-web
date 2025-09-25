@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { axiosClient } from "../services/api";
 
+/*
+  na gamit dya para mag handle CRUD operations sa system
+*/
+
+// system api URL
 const TARGET_SYSTEM = import.meta.env.VITE_TARGET_SYSTEM;
 
-export const useSystemAPI = () => {
-  const [apiLoading, setApiLoading] = useState(false)
 
+export const useSystemAPI = () => {
+  const [apiLoading, setApiLoading] = useState(false); // handles checking of operations
+
+
+  // handles the GET operations with the system
   const API_GET = async (url, config = {}) => {
     setApiLoading(true);
     try {
@@ -21,6 +29,7 @@ export const useSystemAPI = () => {
   };
 
 
+  // handles the POST operations with the system
   const API_POST = async (url, body = {}, config = {}) => {
     setApiLoading(true);
     try {
@@ -35,6 +44,8 @@ export const useSystemAPI = () => {
     }
   };
 
+
+  // handles the PUT operations with the system
     const API_PUT = async (url, body = {}, config = {}) => {
     setApiLoading(true);
     try {
@@ -49,6 +60,8 @@ export const useSystemAPI = () => {
     }
   };
 
+
+  // handles the DELETE operations with the system
   const API_DELETE = async (url, config = {}) => {
     setApiLoading(true);
     try {
@@ -63,5 +76,7 @@ export const useSystemAPI = () => {
     }
   };
 
+
+  // returns the functions
   return { API_GET, API_POST, API_PUT, API_DELETE, API_LOADING:apiLoading };
 };

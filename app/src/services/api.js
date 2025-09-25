@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 // url for auth services
 const TARGET_AUTH = import.meta.env.VITE_TARGET_AUTH;
 
+
 // helper function to check if token is expired
 function isTokenExpired(token) {
   if (!token) return true;
@@ -16,27 +17,14 @@ function isTokenExpired(token) {
 }
 
 
-// axios instance
+// create new axios instance
 export const axiosClient = axios.create({
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
 
 
-// interceptor to attach access token on every requests
-axiosClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-
-// axios instance for refreshing access tokens
+// axios instance for refreshing tokens
 const refreshAxios = axios.create({
   baseURL: TARGET_AUTH,
   withCredentials: true,
@@ -44,7 +32,7 @@ const refreshAxios = axios.create({
 });
 
 
-// intercepts axios instance and includes CSRF and credentials on cookieon request
+// intercepts axios instance for refreshing tokens. includes CSRF and credentials on requests
 refreshAxios.interceptors.request.use((config) => {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; csrf_refresh_token=`);
@@ -64,28 +52,43 @@ let refreshPromise = null;
 export const attempt_refresh = async () => {
   if (refreshPromise) return refreshPromise;
 
-  refreshPromise = (async () => {
-    try {
-      let token = localStorage.getItem("accessToken");
+  refreshPromise = (
+    async () => {
+      try {
+        let token = localStorage.getItem("accessToken");
 
-      if (!token || isTokenExpired(token)) {
-        const res = await refreshAxios.post("/auth/refresh");
-        token = res.data.tkn_acc;
-        localStorage.setItem("accessToken", token);
+        if (!token || isTokenExpired(token)) {
+          const res = await refreshAxios.post("/auth/refresh");
+          token = res.data.tkn_acc;
+          localStorage.setItem("accessToken", token);
+        }
+
+        return true;
+      } catch (err) {
+        console.error("[REFRESH FAILED]", err);
+        localStorage.clear();
+        return false;
+      } finally {
+        refreshPromise = null;
       }
-
-      return true;
-    } catch (err) {
-      console.error("[REFRESH FAILED]", err);
-      localStorage.clear();
-      return false;
-    } finally {
-      refreshPromise = null;
     }
-  })();
+  )();
 
   return refreshPromise;
 };
+
+
+// interceptor to attach token on every requests
+axiosClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 
 // interceptors for responses, attemtps to silently refresh the token if received UNAUTHORIZED status code

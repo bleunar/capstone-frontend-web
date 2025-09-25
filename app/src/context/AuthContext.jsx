@@ -1,11 +1,16 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { axiosClient, attempt_refresh } from "../services/api";
-import { href, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
-const TARGET_AUTH = import.meta.env.VITE_TARGET_AUTH; // Authentication Service URL
-const TARGET_SYSTEM = import.meta.env.VITE_TARGET_SYSTEM; // Authentication Service URL
+/*
+  na gamit dya para mag handle sang authentication kag authorization
+*/
 
+const TARGET_AUTH = import.meta.env.VITE_TARGET_AUTH; // Authentication API URL
+const TARGET_SYSTEM = import.meta.env.VITE_TARGET_SYSTEM; // System API URL
+
+// authentication context
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -16,10 +21,12 @@ export function AuthProvider({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
 
   // user data fetched from database
-  const [cred, setCred] = useState({})
+  const [credentials, setCredentials] = useState({})
   const [account, setAccount] = useState({});
   const [settings, setSettings] = useState({});
 
+
+  // login function
   async function login(username, password) {
     try {
       const response = await axiosClient.post(TARGET_AUTH + "/auth/login", { username, password });
@@ -40,13 +47,14 @@ export function AuthProvider({ children }) {
   }
 
 
+  // logout function
   async function logout() {
     try {
       await axiosClient.post(TARGET_AUTH + "/auth/logout");
       localStorage.clear();
       setAuthenticated(false)
       nav("/")
-      notify
+      notifyConfirm("Logged out sucessfully")
     } catch (error) {
       let msg = error.response?.data?.msg ? error.response.data.msg : "unknown error when logging out";
       throw msg;
@@ -54,7 +62,8 @@ export function AuthProvider({ children }) {
   }
 
 
-  async function fetchAccountData() { // general account data fetch
+  // fetches all account data (account and settings)
+  async function fetchAccountData() {
     try {
       await fetchAccount();
       await fetchAccountSettings();
@@ -64,6 +73,9 @@ export function AuthProvider({ children }) {
     } finally {
     }
   }
+
+
+  // fetches account data only
   async function fetchAccount() {
     try {
       const result = await axiosClient.get(TARGET_SYSTEM + "/accounts/me");
@@ -74,6 +86,8 @@ export function AuthProvider({ children }) {
     }
   }
 
+
+  // fetches account settings data only
   async function fetchAccountSettings() {
     try {
       const result = await axiosClient.get(TARGET_SYSTEM + "/account_settings/");
@@ -85,9 +99,7 @@ export function AuthProvider({ children }) {
   }
 
 
-
-
-
+  // handle account update
   async function editAccount(data) {
     try {
       await axiosClient.put(TARGET_AUTH + "/accounts/", { data });
@@ -98,6 +110,7 @@ export function AuthProvider({ children }) {
   }
 
 
+  // handle account settings update
   async function editAccountSettings(data) {
     try {
       await axiosClient.put(TARGET_SYSTEM + "/account_settings", { ...data });
@@ -109,54 +122,59 @@ export function AuthProvider({ children }) {
   }
 
 
+  // fetch account data only if authenticated
   useEffect(() => {
     if (authenticated) {
       fetchAccountData()
     }
   }, [authenticated])
 
-  // auth check on load
+
+  // authentication check on component load
   useEffect(() => {
     const init = async () => {
       setAuthLoading(true);
       try {
+        // attempt to refresh token
         const refreshed = await attempt_refresh();
 
-        if (refreshed) {
-          const token = localStorage.getItem("accessToken");
-          if (token && token.split(".").length === 3) {
-            try {
-              const decoded = jwtDecode(token);
-              setCred(decoded);
-              localStorage.removeItem("session_ended");
-              setAuthenticated(true);
-            } catch (decodeErr) {
-              console.error("[JWT DECODE FAILED]", decodeErr);
-              console.warn("[INVALID TOKEN FORMAT]");
-              localStorage.clear();
-              setAuthenticated(false);
-              setCred(null);
-              nav("/");
-            }
-          } else {
-            console.warn("[INVALID TOKEN FORMAT]");
-            localStorage.clear();
-            setAuthenticated(false);
-            setCred(null);
-            nav("/");
-          }
-        } else {
+        // if token refresh attemt failed
+        if (!refreshed) {
           localStorage.clear();
           localStorage.setItem("session_ended", "yas");
           setAuthenticated(false);
-          setCred(null);
+          setCredentials(null);
+          nav("/");
+        }
+
+        const token = localStorage.getItem("accessToken");
+
+        if (token && token.split(".").length === 3) {
+          try {
+            const decoded = jwtDecode(token);
+            setCredentials(decoded);
+            localStorage.removeItem("session_ended");
+            setAuthenticated(true);
+          } catch (decodeErr) {
+            console.error("[JWT DECODE FAILED]", decodeErr);
+            console.warn("[INVALID TOKEN FORMAT]");
+            localStorage.clear();
+            setAuthenticated(false);
+            setCredentials(null);
+            nav("/");
+          }
+        } else {
+          console.warn("[INVALID TOKEN FORMAT]");
+          localStorage.clear();
+          setAuthenticated(false);
+          setCredentials(null);
           nav("/");
         }
       } catch (error) {
         console.error("[AUTH INIT ERROR]", error);
         localStorage.clear();
         setAuthenticated(false);
-        setCred(null);
+        setCredentials(null);
         nav("/");
       } finally {
         setAuthLoading(false);
@@ -168,11 +186,11 @@ export function AuthProvider({ children }) {
 
 
   const values = {
-    // used to check state of authentication
+    // check state of authentication
     authLoading,
     authenticated,
 
-    // stores the user's account data and settings fetched from the database
+    // stores the user's account and settings fetched from the database
     account,
     settings,
 
@@ -180,14 +198,14 @@ export function AuthProvider({ children }) {
     login,
     logout,
 
-    // fetches account data, credentials, and settings
+    // fetches account and settings data
     fetchAccountData,
 
-    // manual fetch for account data, credentials, and settings
+    // manual fetch for account and settings
     fetchAccount,
     fetchAccountSettings,
 
-    // edit function for account data and settings
+    // edit functions for account and settings
     editAccount,
     editAccountSettings,
   }
