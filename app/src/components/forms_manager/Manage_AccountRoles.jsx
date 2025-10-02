@@ -60,7 +60,8 @@ export default function AccountRolesManagement({showReturnButton = true}) {
     const handleFetchData = async () => {
         try {
             const result = await API_GET(`/${TARGET_ENTITY}/`)
-            setData(result.data)
+            // console.log(result)
+            setData(result)
         } catch (error) {
             notifyError(`failed to fetch ${TARGET_ENTITY} data`)
         }

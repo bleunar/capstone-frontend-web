@@ -201,7 +201,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
     const handleFetch = async () => {
         try {
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`);
-            setData(result.data[0]);
+            setData(result[0]);
         } catch (error) {
             notifyError(`Failed to fetch ${TARGET_NAME} data`, error);
         }
@@ -282,7 +282,7 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
     const handleFetch = async () => {
         try {
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`)
-            setData(result.data[0])
+            setData(result[0])
         } catch (error) {
             notifyError(`Failed to fetch ${TARGET_NAME}`, error)
         }

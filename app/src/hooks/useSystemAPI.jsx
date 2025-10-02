@@ -18,7 +18,7 @@ export const useSystemAPI = () => {
     setApiLoading(true);
     try {
       const result = await axiosClient.get(`${TARGET_SYSTEM}${url}`, config);
-      return result.data;
+      return result?.data?.data;
     } catch (error) {
       console.error(error);
       let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when sending data";

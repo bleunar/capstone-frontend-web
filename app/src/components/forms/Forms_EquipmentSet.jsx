@@ -69,7 +69,7 @@ export default function Item_EquipmentSet({ target_id }) {
     const fetchEquipment = async () => {
         try {
             const result = await API_GET(`equipment_sets?id=${target_id}`)
-            setEquipment(result.data)
+            setEquipment(result)
         } catch (error) {
             notifyError("Failed to fetch equipment set", error)
             console.error(error)
@@ -80,7 +80,7 @@ export default function Item_EquipmentSet({ target_id }) {
     const fetchEquipmentComponents = async () => {
         try {
             const result = await API_GET(`equipment_set_components?id=${target_id}`)
-            setEquipment(result.data)
+            setEquipment(result)
         } catch (error) {
             notifyError("Failed to fetch components", error)
             console.error(error)

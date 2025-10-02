@@ -18,7 +18,7 @@ export default function History_Accounts({showReturnButton = true}) {
     const fetchHistory = async () => {
         try {
             const res = await API_GET("/account_logs");
-            setHistory(res.data || []);
+            setHistory(res || []);
         } catch (error) {
             console.error(error);
         }

@@ -58,7 +58,7 @@ export default function LocationsManagement({showReturnButton = true}) {
     const handleFetchData = async () => {
         try {
             const result = await API_GET(`/${TARGET_ENTITY}/`)
-            setData(result.data)
+            setData(result)
         } catch (error) {
             notifyError(`failed to fetch ${TARGET_ENTITY} data`)
         }

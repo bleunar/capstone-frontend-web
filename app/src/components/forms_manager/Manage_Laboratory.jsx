@@ -9,7 +9,7 @@ export default function LabManagement() {
     const fetchLocations = async () => {
         try {
             const result = await API_GET("/locations");
-            setLocations(result.data);
+            setLocations(result);
         } catch (error) {
             console.log(error);
         }
@@ -83,7 +83,7 @@ function LabEquipments({ location_id }) {
             const result = await API_GET(
                 `/equipment_sets?location_id=${location_id}`
             );
-            setEquipmentSets(result.data);
+            setEquipmentSets(result);
         } catch (error) {
             console.error(error);
         }

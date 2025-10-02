@@ -199,7 +199,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
     const handleFetch = async () => {
         try {
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`);
-            setData(result.data[0]);
+            setData(result[0]);
         } catch (error) {
             notifyError(`Failed to fetch ${TARGET_NAME} data`, error);
         }
@@ -209,7 +209,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
     const handleFetchExtraData = async () => {
         try {
             const result = await API_GET("/access_levels")
-            setExtraData({ ...extraData, access_levels: result.data })
+            setExtraData({ ...extraData, access_levels: result })
         } catch (error) {
             notifyError(`Failed to fetch extra data for ${TARGET_NAME}`, error)
         }
@@ -285,7 +285,7 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
     const handleFetch = async () => {
         try {
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`)
-            setData(result.data[0])
+            setData(result[0])
         } catch (error) {
             notifyError(`Failed to fetch ${TARGET_NAME}`, error)
         }
@@ -296,7 +296,7 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
     const handleFetchExtraData = async () => {
         try {
             const result = await API_GET(`/access_levels?id=${data.access_level}`)
-            setExtraData({ ...extraData, access_level: result.data })
+            setExtraData({ ...extraData, access_level: result })
         } catch (error) {
             notifyError(`Failed to fetch extra data for ${TARGET_NAME}`, error)
         }
@@ -354,7 +354,7 @@ export const ItemVisualizerContent_AccountRoles = ({ data, mode = "list" }) => {
     const handleFetchExtraData = async () => {
         try {
             const result = await API_GET(`/access_levels?id=${data.access_level}`)
-            setExtraData({ ...extraData, access_level: result.data })
+            setExtraData({ ...extraData, access_level: result })
         } catch (error) {
             console.error(error)
             notifyError(`Failed to fetch extra data for ${TARGET_NAME}`, error)
