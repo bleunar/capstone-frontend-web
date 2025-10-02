@@ -40,8 +40,7 @@ export function AuthProvider({ children }) {
       }
 
     } catch (error) {
-      console.error(error)
-      let msg = error.response?.data?.msg ? error.response.data.msg : "unknown error when logging in";
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when logging in";
       throw msg;
     }
   }
@@ -56,7 +55,7 @@ export function AuthProvider({ children }) {
       nav("/")
       notifyConfirm("Logged out sucessfully")
     } catch (error) {
-      let msg = error.response?.data?.msg ? error.response.data.msg : "unknown error when logging out";
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when logging out";
       throw msg;
     }
   }
@@ -68,7 +67,7 @@ export function AuthProvider({ children }) {
       await fetchAccount();
       await fetchAccountSettings();
     } catch (error) {
-      let msg = error.response?.data?.msg ? error.response.data.msg : "unknown error when fetch all account data";
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetch all account data";
       throw msg;
     } finally {
     }
@@ -81,7 +80,7 @@ export function AuthProvider({ children }) {
       const result = await axiosClient.get(TARGET_SYSTEM + "/accounts/me");
       setAccount(result.data.data[0]);
     } catch (error) {
-      let msg = error.response?.data?.msg ? error.response.data.msg : "unknown error when fetching account data";
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetching account data";
       throw msg;
     }
   }
@@ -93,7 +92,7 @@ export function AuthProvider({ children }) {
       const result = await axiosClient.get(TARGET_SYSTEM + "/account_settings/");
       setSettings(result.data.data);
     } catch (error) {
-      let msg = error.response?.data?.msg ? error.response.data.msg : "unknown error when fetching account settings";
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetching account settings";
       throw msg;
     }
   }
@@ -105,7 +104,9 @@ export function AuthProvider({ children }) {
       await axiosClient.put(TARGET_AUTH + "/accounts/", { data });
       return true
     } catch (error) {
-      console.log('[AUTH] ERROR: fetch account data. ' + error)
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetching account settings";
+      console.log('[AUTH] ERROR: edit account data. ' + msg)
+      throw msg;
     }
   }
 
@@ -117,7 +118,9 @@ export function AuthProvider({ children }) {
       fetchAccountSettings()
       return true
     } catch (error) {
-      console.log('[AUTH] ERROR: fetch account data. ' + error)
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetching account settings";
+      console.log('[AUTH] ERROR: edit account settings. ' + msg)
+      throw msg;
     }
   }
 

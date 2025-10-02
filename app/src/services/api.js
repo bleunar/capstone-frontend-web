@@ -59,7 +59,7 @@ export const attempt_refresh = async () => {
 
         if (!token || isTokenExpired(token)) {
           const res = await refreshAxios.post("/auth/refresh");
-          token = res.data.tkn_acc;
+          token = res?.data?.data?.tkn_acc ? res.data.data.tkn_acc : "";
           localStorage.setItem("accessToken", token);
         }
 

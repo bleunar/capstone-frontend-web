@@ -21,8 +21,8 @@ export const useSystemAPI = () => {
       return result.data;
     } catch (error) {
       console.error(error);
-      const msg = error.response?.data?.msg ?? "API GET: Unknown error";
-      throw msg;
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when sending data";
+      console.error(msg);
     } finally {
       setApiLoading(false);
     }
@@ -36,8 +36,8 @@ export const useSystemAPI = () => {
       const result = await axiosClient.post(`${TARGET_SYSTEM}${url}`, body, config);
       return result.data;
     } catch (error) {
-      console.error(error);
-      const msg = error.response?.data?.msg ?? "API POST: Unknown error";
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetching data";
+      console.error(msg);
       throw msg;
     } finally {
       setApiLoading(false);
@@ -53,8 +53,8 @@ export const useSystemAPI = () => {
       return result.data;
     } catch (error) {
       console.error(error);
-      const msg = error.response?.data?.msg ?? "API PUT: Unknown error";
-      throw msg;
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when updating data";
+      console.error(msg);
     } finally {
       setApiLoading(false);
     }
@@ -69,8 +69,8 @@ export const useSystemAPI = () => {
       return result.data;
     } catch (error) {
       console.error(error);
-      const msg = error.response?.data?.msg ?? "API DELETE: Unknown error";
-      throw msg;
+      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when deleting data";
+      console.error(msg);
     } finally {
       setApiLoading(false);
     }
