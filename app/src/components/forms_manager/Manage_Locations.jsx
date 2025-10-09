@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react"
-import Pagination from "../misc/Pagination"
+import Pagination from "../general/Pagination"
 import { useSystemAPI } from "../../hooks/useSystemAPI"
 import ItemVisualizer from "../visualizer/ItemVisualizer"
 import { useNotifications } from "../../context/NotificationContext"
@@ -79,7 +79,7 @@ export default function LocationsManagement({showReturnButton = true}) {
                 showReturnButton && (
 
                     <div className="d-flex my-3 justify-content-start align-items-center">
-                        <div className="btn btn-primary" onClick={() => nav("/dashboard/manage")}>
+                        <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
                             <i class="bi bi-caret-left-fill"></i> Return
                         </div>
                     </div>

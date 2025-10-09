@@ -1,89 +1,95 @@
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import LabManagement from "../forms_manager/Manage_Laboratory";
-import OverviewGeneral from "../overview/Overview_General";
-import GeneralSystemInfromation from "../dashboard_sections/GeneralSystemInformation";
+import DashboardHomeRoot from "../visualizer/overview/DashboardRoot";
+import GeneralSystemInfromation from "../visualizer/overview/GeneralSystemInformation";
 import ManagerController from "../general/ManagerController";
+import HeaderSection from "../dashboard_sections/HeaderSection";
+import "../../assets/css/dashboard.tabs.css";
 
 export default function DashboardContentRoot() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabParam = searchParams.get("tab") || "home";
+    const [activeTab, setActiveTab] = useState(tabParam);
 
+    // Sync tab state with URL query param
+    useEffect(() => {
+        setActiveTab(tabParam);
+    }, [tabParam]);
+
+    // When user clicks a tab
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        setSearchParams({ tab });
+    };
+
+    // Style logic for tabs
+    const tabClass = (tab) =>
+        `nav-link ${activeTab === tab ? "bg-body text-body border border-bottom-0" : ""}`;
     return (
-        <div className="container px-0">
+        <>
+            <HeaderSection />
 
-            {/* ========== TAB BUTTONS ========== */}
-            <ul className="nav nav-tabs" id="myTab" role="tablist">
+            <div className="container-fluid m-0 px-0">
+                {/* ========== TAB BUTTONS ========== */}
+                <ul className="nav nav-tabs justify-content-center bg-primary border-0" id="myTab" role="tablist">
+                    <li className="nav-item" role="presentation">
+                        <button
+                            className={tabClass("home")}
+                            onClick={() => handleTabChange("home")}
+                            type="button"
+                            role="tab"
+                        >
+                            Home
+                        </button>
+                    </li>
 
-                {/* Home (Active) */}
-                <li className="nav-item" role="presentation">
-                    <button className="nav-link active" data-bs-toggle="tab" type="button" role="tab"
-                        aria-selected="true"
-                        data-bs-target="#home-tab-pane"
-                        aria-controls="home-tab-pane"
-                        id="home-tab"
-                    >
-                        Home
-                    </button>
-                </li>
+                    <li className="nav-item" role="presentation">
+                        <button
+                            className={tabClass("comlab")}
+                            onClick={() => handleTabChange("comlab")}
+                            type="button"
+                            role="tab"
+                        >
+                            Computer Laboratory
+                        </button>
+                    </li>
 
-                {/* Computer Lab */}
-                <li className="nav-item" role="presentation">
-                    <button className="nav-link" data-bs-toggle="tab" type="button" role="tab"
-                        aria-selected="false"
-                        data-bs-target="#comlab-tab-pane"
-                        aria-controls="comlab-tab-pane"
-                        id="comlab-tab"
-                    >
-                        Computer Laboratory
-                    </button>
-                </li>
+                    <li className="nav-item" role="presentation">
+                        <button
+                            className={tabClass("manage")}
+                            onClick={() => handleTabChange("manage")}
+                            type="button"
+                            role="tab"
+                        >
+                            Manage
+                        </button>
+                    </li>
+                </ul>
 
-                {/* Manage */}
-                <li className="nav-item" role="presentation">
-                    <button className="nav-link" data-bs-toggle="tab" type="button" role="tab"
-                        aria-selected="false"
-                        data-bs-target="#profile-tab-pane"
-                        aria-controls="profile-tab-pane"
-                        id="profile-tab"
-                    >
-                        Manage
-                    </button>
-                </li>
-            </ul>
-
-            {/* TAB CONTENTS */}
-            <div className="tab-content" id="myTabContent">
-
-                {/* Home (Active) */}
-                <div className="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabIndex="0">
-                    <div className="py-5">
-                        {
+                {/* ========== TAB CONTENTS ========== */}
+                <div className="container">
+                    {activeTab === "home" && (
+                        <div className="tab-pane fade show active py-5" id="home-tab-pane">
                             <GeneralSystemInfromation />
-                        }
-                        {
-                            <OverviewGeneral />
-                        }
-                    </div>
-                </div>
+                            <DashboardHomeRoot />
+                        </div>
+                    )}
 
-                {/* Computer Lab */}
-                <div className="tab-pane fade" id="comlab-tab-pane" role="tabpanel" aria-labelledby="comlab-tab" tabIndex="0">
-                    <div className="p-3">
-                        {
+                    {activeTab === "comlab" && (
+                        <div className="tab-pane fade show active p-3" id="comlab-tab-pane">
+                            <h2>Manage Computer Laboratory</h2>
                             <LabManagement />
-                        }
-                    </div>
-                </div>
+                        </div>
+                    )}
 
-                {/* Manage */}
-                <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabIndex="0">
-                    <div className="p-3">
-                        {
+                    {activeTab === "manage" && (
+                        <div className="tab-pane fade show active p-3" id="manage-tab-pane">
                             <ManagerController />
-                        }
-                    </div>
+                        </div>
+                    )}
                 </div>
-
-
             </div>
-
-        </div>
-    )
+        </>
+    );
 }

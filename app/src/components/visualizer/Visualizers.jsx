@@ -32,11 +32,19 @@ ChartJS.register(
 
 export const BarVisualizer = ({ title, description = "", data, options }) => (
     <div className="h-100">
-        <div className="p-3 rounded shadow border bg-body-tertiary h-100 d-flex flex-column">
-            {title && <div className="p mb-0 fw-bold">{title}</div>}
-            {description && <div className="text-muted mb-0" style={{fontSize:'0.75rem'}}>{description}</div>}
-            <div className="flex-grow-1" style={{maxHeight:'350px'}}>
-                <Bar data={data} options={{ maintainAspectRatio: false, ...options }} />
+        <div className="rounded shadow border bg-body-tertiary h-100 d-flex flex-column overflow-hidden">
+            {
+                (title || description) && (
+                    <div className="p-2 px-3 border-bottom">
+                        {title && <div className="p mb-0 m-0">{title}</div>}
+                        {description && <div className="p mb-0 text-muted" style={{fontSize: '0.75rem'}}>{description}</div>}
+                    </div>
+                )
+            }
+            <div className="p-3">
+                <div className="flex-grow-1" style={{ maxHeight: '400px' }}>
+                    <Bar data={data} options={{ maintainAspectRatio: false, ...options }} />
+                </div>
             </div>
         </div>
     </div>
@@ -44,23 +52,39 @@ export const BarVisualizer = ({ title, description = "", data, options }) => (
 
 export const PieVisualizer = ({ title, description = "",  data, options }) => (
     <div className="h-100">
-        <div className="p-3 rounded shadow border bg-body-tertiary h-100 d-flex flex-column">
-            {title && <div className="p mb-0 fw-bold">{title}</div>}
-            {description && <div className="text-muted mb-0" style={{fontSize:'0.75rem'}}>{description}</div>}
-            <div className="flex-grow-1" style={{maxHeight:'350px'}}>
-                <Pie data={data} options={{ maintainAspectRatio: false, ...options }} />
+        <div className="rounded shadow border bg-body-tertiary h-100 d-flex flex-column overflow-hidden">
+            {
+                (title || description) && (
+                    <div className="p-2 px-3 border-bottom">
+                        {title && <div className="p mb-0 m-0">{title}</div>}
+                        {description && <div className="p mb-0 text-muted" style={{fontSize: '0.75rem'}}>{description}</div>}
+                    </div>
+                )
+            }
+            <div className="p-3">
+                <div className="flex-grow-1" style={{ maxHeight: '400px' }}>
+                    <Pie data={data} options={{ maintainAspectRatio: false, ...options }} />
+                </div>
             </div>
         </div>
     </div>
 );
 
 export const LineVisualizer = ({ title, description = "",  data, options }) => (
-    <div className="h-100" >
-        <div className="p-3 rounded shadow border bg-body-tertiary h-100 d-flex flex-column">
-            {title && <div className="p mb-0 fw-bold">{title}</div>}
-            {description && <div className="text-muted mb-0" style={{fontSize:'0.75rem'}}>{description}</div>}
-            <div className="flex-grow-1" style={{maxHeight:'350px'}}>
-                <Line data={data} options={{ maintainAspectRatio: false, ...options }} />
+    <div className="h-100">
+        <div className="rounded shadow border bg-body-tertiary h-100 d-flex flex-column overflow-hidden">
+            {
+                (title || description) && (
+                    <div className="p-2 px-3 border-bottom">
+                        {title && <div className="p mb-0 m-0">{title}</div>}
+                        {description && <div className="p mb-0 text-muted" style={{fontSize: '0.75rem'}}>{description}</div>}
+                    </div>
+                )
+            }
+            <div className="p-3">
+                <div className="flex-grow-1" style={{ maxHeight: '400px' }}>
+                    <Line data={data} options={{ maintainAspectRatio: false, ...options }} />
+                </div>
             </div>
         </div>
     </div>

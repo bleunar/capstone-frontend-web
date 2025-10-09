@@ -2,20 +2,19 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext.jsx';
 
 import LoginPage from './pages/LoginPage.jsx'
-import RecoveryPage from './pages/RecoveryPage.jsx'
 import Dashboard from './pages/Dashboard.jsx'
-import ProfilePage from './pages/ProfilePage.jsx'
 import SettingsPage from './pages/SettingsPage.jsx'
 import ErrorPage from './pages/Error.jsx'
 import ComponentProtector from './components/general/ComponentProtector.jsx';
-import NavigationBarOffcanvas from './components/general/NavigationBarOffCanvas.jsx';
+import RequireAuth from './components/general/RequireAuth.jsx';
+import NavigationBarOffcanvas from './components/general/NavigationBar.jsx';
 import LoadingPage from './components/general/LoadingPage.jsx';
 import AccountRolesManagement from './components/forms_manager/Manage_AccountRoles.jsx';
 import AccountsManagement from './components/forms_manager/Manage_Accounts.jsx';
 import History_Accounts from './components/forms_manager/History_Accounts.jsx';
 import LocationsManagement from './components/forms_manager/Manage_Locations.jsx';
-import OverviewAccounts from './components/overview/Overview_Accounts.jsx';
-import ManageEntityPage from './pages/ManageEntityPage.jsx';
+import EquipmentSetsManagement from './components/forms_manager/Manage_EquipmentSets.jsx';
+import OverviewAccounts from './components/visualizer/overview/Overview_Accounts.jsx';
 import ManagerController from './components/general/ManagerController.jsx';
 
 function App() {
@@ -30,15 +29,11 @@ function App() {
       {
         authenticated ? (
           <>
-            {
-              <NavigationBarOffcanvas />
-            }
-            <div style={{ height: "8vh" }} className='w-100'></div>
+            <NavigationBarOffcanvas />
+            <div style={{ height: "5vh" }} className='w-100'></div>
           </>
         ) : ""
       }
-
-
 
       <Routes>
         <Route path="/"
@@ -47,33 +42,27 @@ function App() {
           }
         />
 
-        <Route path="/recovery"
-          element={
-            <RecoveryPage />
-          }
-        />
-
         <Route path="/dashboard"
           element={
-            <Dashboard />
-          }
-        />
-
-        <Route path="/profile"
-          element={
-            <ProfilePage />
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
           }
         />
 
         <Route path="/settings"
           element={
-            <SettingsPage />
+            <RequireAuth>
+              <SettingsPage />
+            </RequireAuth>
           }
         />
 
         <Route path="/dashboard/manage"
           element={
-            <ManagerController showReturnButton />
+            <RequireAuth>
+              <ManagerController showReturnButton />
+            </RequireAuth>
           }
         />
 
@@ -116,7 +105,7 @@ function App() {
         <Route path="/dashboard/manage/accounts/history"
           element={
             <ComponentProtector
-              required_access_level={[0,1]}
+              required_access_level={[0, 1]}
               component={
                 <History_Accounts />
               }
@@ -157,9 +146,7 @@ function App() {
             <ComponentProtector
               required_access_level={[0, 1]}
               component={
-                <>
-                  Equipment Management
-                </>
+                <EquipmentSetsManagement />
               }
             />
           }

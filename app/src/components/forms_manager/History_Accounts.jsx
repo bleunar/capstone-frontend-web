@@ -91,7 +91,7 @@ export default function History_Accounts({showReturnButton = true}) {
                     showReturnButton && (
 
                         <div className="d-flex my-3 justify-content-start align-items-center">
-                            <div className="btn btn-primary" onClick={() => nav("/dashboard/manage")}>
+                            <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
                                 <i class="bi bi-caret-left-fill"></i> Return
                             </div>
                         </div>

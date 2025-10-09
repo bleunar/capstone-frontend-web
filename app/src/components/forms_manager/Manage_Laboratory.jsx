@@ -34,7 +34,7 @@ function LocationTabs({ locations }) {
     return (
         <>
             <div className="d-flex justify-content-between mb-3 flex-wrap-reverse">
-                <ul className="nav nav-pills gap-2" id="myTab" role="tablist">
+                <ul className="nav nav-pills gap-2 justify-content-start w-100" id="myTab" role="tablist">
                     {locations.map((item) => (
                         <li key={item.id} className="nav-item" role="presentation">
                             <button
@@ -75,6 +75,7 @@ function LocationTabs({ locations }) {
 }
 
 function LabEquipments({ location_id }) {
+    const [loading, setLoading] = useState(false)
     const [equipmentSets, setEquipmentSets] = useState([1, 2, 3, 4, 5]);
     const { API_GET } = useSystemAPI();
 
@@ -86,6 +87,8 @@ function LabEquipments({ location_id }) {
             setEquipmentSets(result);
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -95,12 +98,28 @@ function LabEquipments({ location_id }) {
         }
     }, [location_id]);
 
+    if (loading) return (
+            <div className="d-flex justify-content-center align-items-center w-100">
+
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+            </div>
+        )
+    
+
     return (
         <>
             {
                 equipmentSets && equipmentSets.map((item, key) => (
-                    <Item_EquipmentSet key={item} target_id={item} />
+                    <Item_EquipmentSet key={key} target_id={item} />
                 ))
+            }
+
+            {
+                equipmentSets && equipmentSets.length == 0 && (
+                    <div className="text-center w-100">No Items</div>
+                )
             }
         </>
     );

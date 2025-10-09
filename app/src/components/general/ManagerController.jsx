@@ -23,7 +23,7 @@ export default function ManagerController({ showReturnButton = false }) {
                     {/* ---------- Account Management Links ----------  */}
                     <div className="col-12 col-md-6 col-xl-4 p-2">
                         <div className="card">
-                            <div className="card-header text-light fw-bold text-center bg-primary">
+                            <div className="card-header text-light fw-bold text-center bg-secondary">
                                 Account Management
                             </div>
                             <ul className="list-group text-start list-group-flush">
@@ -59,7 +59,7 @@ export default function ManagerController({ showReturnButton = false }) {
                     {/* ---------- Account Management Links ----------  */}
                     <div className="col-12 col-md-6 col-xl-4 p-2">
                         <div className="card">
-                            <div className="card-header text-light fw-bold text-center bg-primary">
+                            <div className="card-header text-light fw-bold text-center bg-secondary">
                                 Manage Computer Laboratory
                             </div>
                             <ul className="list-group text-start list-group-flush">
@@ -89,7 +89,7 @@ export default function ManagerController({ showReturnButton = false }) {
                     {/* ---------- Account Management Links ----------  */}
                     <div className="col-12 col-md-6 col-xl-4 p-2">
                         <div className="card">
-                            <div className="card-header text-light fw-bold text-center bg-primary">
+                            <div className="card-header text-light fw-bold text-center bg-secondary">
                                 Ticket Management (Unfinished)
                             </div>
                             <ul className="list-group text-start list-group-flush">

@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     build: {
-      outDir: '../dist'
+      outDir: 'dist'
     },
     server: {
       host: env.VITE_ADDRESS,

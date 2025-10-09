@@ -1,4 +1,4 @@
-export default function Pagination ({ currentPage, totalPages, onPageChange }) {
+export default function Pagination({ currentPage, totalPages, onPageChange }) {
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
     return (

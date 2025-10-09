@@ -6,11 +6,7 @@ import { antiRacismCheck } from "../services/helper";
 
 export default function SettingsPage() {
     const {settings, editAccountSettings} = useAuth()
-    const {notifyInform, notifyError} = useNotifications()
-
-    const [allowSubmit, setAllowSubmit] = useState(false);
     const [currentSettings, setCurrentSettings] = useState()
-
     // submit updated settings
     const handleSubmit = async () => {
         try {
@@ -20,6 +16,9 @@ export default function SettingsPage() {
             notifyError("Failed to Update Account Settings")
         }
     }
+    const {notifyInform, notifyError} = useNotifications()
+    const [allowSubmit, setAllowSubmit] = useState(false);
+
 
     // reset settings modifications
     const handleReset = () => {
@@ -47,7 +46,7 @@ export default function SettingsPage() {
     }, [currentSettings])
     return (
         <>
-            <div className="container py-3">
+            <div className="container py-5">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <Link to="/dashboard" className="btn btn-secondary"><i className="bi bi-caret-left-fill"></i> Return Home </Link>
                 </div>

@@ -1,115 +1,166 @@
-import { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
+import { createContext, useContext, useCallback, useEffect } from "react";
+import { toast, ToastContainer } from 'react-toastify';
 import { useAuth } from "./AuthContext";
-import useAudio from "../hooks/useAudio";
+import useAudio from "../hooks/useAudio.jsx";
+
+const positionMap = {
+    'top-0 start-50 translate-middle-x': 'top-center',
+    'top-0 start-0': 'top-left',
+    'top-0 end-0': 'top-right',
+    'bottom-0 start-50 translate-middle-x': 'bottom-center',
+    'bottom-0 start-0': 'bottom-left',
+    'bottom-0 end-0': 'bottom-right'
+};
 
 const NotificationContext = createContext();
-let counter = 0;
-
-function create_id () {
-    counter+=1
-    const new_id =  `${Date.now()}${counter}`
-    return new_id
-}
 
 export const useNotifications = () => useContext(NotificationContext);
 
 export function NotificationProvider({ children }) {
-    const { settings, authenticated } = useAuth()
+    const { settings } = useAuth()
+    const { play } = useAudio()
 
-    // notification config from user's settings
-    const [notificationPostition, setNotificationPosition] = useState()
-    const [notificationTimeout, setNotificationTimeout] = useState(1000)
-    const timeoutRef = useRef(notificationTimeout);
-    const [notificationMessages, setNotificationMessages] = useState([]); // notification data
-    const {play} = useAudio()
-
-
-    // keep the timeout reference updated
-    useEffect(() => {
-        timeoutRef.current = notificationTimeout;
-    }, [notificationTimeout]);
-
-    
-    // called when sending notifiaction to confirm actions
+    // called when sending notification to confirm actions
     const notifyConfirm = useCallback((text, description = "") => {
-        const id = create_id();
-
-        setNotificationMessages(prev => [...prev, { id, type: 'success', text, description, icon: "bi-check-circle" }]);
+        const position = settings?.notification_position || 'top-right';
+        const duration = (settings?.notification_duration || 3) * 1000;
+    
+        toast.success(text, {
+            position: positionMap[position] || 'top-center',
+            autoClose: duration,
+            className: 'toast-success',
+            progressClassName: 'toast-progress-success',
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
 
         // play success sound
         play("success");
-        setTimeout(() => {
-            setNotificationMessages(prev => prev.filter(item => item.id !== id));
-        }, timeoutRef.current);
-    }, []);
+    }, [play, settings]);
 
 
-    // called when sending notifiaction to inform users of errors
+    // called when sending notification to inform users of errors
     const notifyError = useCallback((text, description = "") => {
-        const id = create_id();
+        const position = settings?.notification_position || 'top-right';
+        const duration = (settings?.notification_duration || 3) * 1000;
 
-        setNotificationMessages(prev => [...prev, { id, type: 'danger', text, description, icon: "bi-exclamation-circle" }]);
+        toast.error(text, {
+            position: positionMap[position] || 'top-center',
+            autoClose: duration,
+            className: 'toast-error',
+            progressClassName: 'toast-progress-error',
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
 
         // play error sound
         play("error");
-        setTimeout(() => {
-            setNotificationMessages(prev => prev.filter(item => item.id !== id));
-        }, timeoutRef.current);
-    }, []);
+    }, [play, settings]);
 
 
-    // called when sending notifiaction to inform users of errors
+    // called when sending notification to inform users
     const notifyInform = useCallback((text, description = "") => {
-        const id = create_id();
+        const position = settings?.notification_position || 'top-right';
+        const duration = (settings?.notification_duration || 3) * 1000;
 
-        setNotificationMessages(prev => [...prev, { id, type: 'info', text, description, icon: "bi-info-circle" }]);
+        toast.info(text, {
+            position: positionMap[position] || 'top-center',
+            autoClose: duration,
+            className: 'toast-info',
+            progressClassName: 'toast-progress-info',
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
 
         // play inform sound
         play("inform");
-        setTimeout(() => {
-            setNotificationMessages(prev => prev.filter(item => item.id !== id));
-        }, timeoutRef.current);
+    }, [play, settings]);
+
+
+    // additional notification methods for different use cases
+    const notifyWarning = useCallback((text, description = "") => {
+        const position = settings?.notification_position || 'top-right';
+        const duration = (settings?.notification_duration || 3) * 1000;
+
+        toast.warning(text, {
+            position: positionMap[position] || 'top-center',
+            autoClose: duration,
+            className: 'toast-warning',
+            progressClassName: 'toast-progress-warning',
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+
+        play("inform");
+    }, [play, settings]);
+
+    const notifyLoading = useCallback((text, promise) => {
+        return toast.promise(promise, {
+            pending: {
+                render() {
+                    return (
+                        <div className="d-flex align-items-center">
+                            <div className="spinner-border spinner-border-sm text-primary me-2" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
+                            <div>{text}</div>
+                        </div>
+                    );
+                }
+            },
+            success: {
+                render({ data }) {
+                    return (
+                        <div className="d-flex align-items-center">
+                            <i className="bi bi-check-circle-fill text-success me-2 fs-5"></i>
+                            <div>Operation completed successfully</div>
+                        </div>
+                    );
+                }
+            },
+            error: {
+                render({ data }) {
+                    return (
+                        <div className="d-flex align-items-center">
+                            <i className="bi bi-exclamation-circle-fill text-danger me-2 fs-5"></i>
+                            <div>Operation failed</div>
+                        </div>
+                    );
+                }
+            }
+        });
     }, []);
 
-
-    // handle notification configuration from user's settings
-    useEffect(() => {
-        setNotificationPosition(settings?.notification_position ? settings?.notification_position : 'top-0 start-50 translate-middle-x')
-
-        setNotificationTimeout(1000 * (settings?.notification_duration ? settings.notification_duration : 3))
-    }, [settings])
-
-
     return (
-        <NotificationContext.Provider value={{ notifyConfirm, notifyError, notifyInform }}>
+        <NotificationContext.Provider value={{ 
+            notifyConfirm, 
+            notifyError, 
+            notifyInform, 
+            notifyWarning, 
+            notifyLoading 
+        }}>
             {children}
-
-
-
-            <div className={`toast-container position-fixed ${notificationPostition} p-3`} style={{ zIndex: 2000 }}>
-            {
-                authenticated && (
-                    <div className="" style={{height: '6vh'}}></div>
-                )
-            }
-
-                {notificationMessages.map(item => (
-                    <div key={item.id} className={`toast align-items-end shadow rounded-pill show mb-2 bg-body`}>
-                        <div className="d-flex">
-                            <div className="toast-body p-1 flex-fill">
-                                <div className="d-flex align-items-center justify-content-between gap-2 px-2">
-                                    <div className="text-start ms-2 flex-fill">
-                                        <div className="p mb-0 text-capitalize">{item.text}</div>
-                                        <div className="text-start text-muted text-capitalize" style={{fontSize:"0.55rem"}}>{item.description ? item.description : ""}</div>
-                                    </div>
-
-                                    <i className={`bi ${item.icon} fs-4 text-${item.type}`}></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                className="custom-toast-container"
+            />
         </NotificationContext.Provider>
     );
 }

@@ -34,13 +34,10 @@ function Clock() {
 }
 
 // returns the current date and time
-export default function ClockFormatted() {
+export default function useDateTime() {
   const { date, time } = Clock();
 
-  return (
-    <div className="flex-fill">
-      <div className="h4 mb-0 p-0 fw-bold">{time}</div>
-      <div className="p">{date}</div>
-    </div>
-  )
+  return {
+    time, date
+  }
 }

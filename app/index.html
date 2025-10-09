@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="icon" type="image/svg+xml" href="/logo-transparent.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CLAIMS</title>
 
@@ -12,7 +12,21 @@
 <body>
   <div id="root">
     <div style="display: flex; justify-content: center; flex-direction: column; align-items: center; height: 100vh;">
-      <img src="https://assets-v2.lottiefiles.com/a/31b6eec0-1171-11ee-a93a-c70638485918/8GYOy7E6kX.gif" width="100px" alt="">
+      <div style="display:flex;align-items:center;justify-content:center;height:80px">
+        <style>
+          @keyframes spin360 {
+            to {
+              transform: rotate(360deg);
+            }
+          }
+        </style>
+        <div style="
+          width:42px;height:42px;border-radius:50%;
+          border:4px solid rgba(0, 0, 0, 0.2);
+          border-top-color:#838383;
+          animation: spin360 .8s linear infinite;
+        " aria-label="Loading" role="status"></div>
+      </div>
     </div>
   </div>
   <script type="module" src="/src/main.jsx"></script>

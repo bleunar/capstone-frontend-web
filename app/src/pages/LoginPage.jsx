@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../context/NotificationContext";
+import BackgroundImage from '../assets/img/phinma-ui.jpg'
+import LogoName from '../assets/img/claims-name-transparent.png'
 
 export default function LoginPage() {
     const { login, authLoading, authenticated } = useAuth()
@@ -33,17 +35,35 @@ export default function LoginPage() {
 
     return (
         <>
-            <div className="container vh-100">
-                <div className="d-flex justify-content-center align-items-center h-100">
-                    <form onSubmit={handleLogin} className="p-4 d-flex flex-column border shadow rounded col-12 col-lg-6 bg-body-tertiary">
-                        <div className="text-center d-flex flex-column">
-                            <i className="fs-1 bi bi-motherboard-fill"></i>
-                            <div className="span h4 m-0"><b>CL</b>AIMS</div>
-                            <div className="span" style={{fontSize:'0.6rem'}}>Computer Laboratory Assets and Inventory Management System</div>
+            <div className="vh-100 vw-100 position-relative">
+                <img
+                    className="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
+                    src={BackgroundImage}
+                />
+                <div
+                    className="position-absolute top-0 start-0 vw-100 vh-100"
+                    style={{
+                        backgroundColor: "rgba(50, 100, 50, 0.75)",
+                        zIndex: 1,
+                    }}
+                ></div>
+
+                <div className="position-relative container d-flex justify-content-center align-items-center h-100" style={{zIndex: '99999'}}>
+                    <form onSubmit={handleLogin} className="p-4 d-flex flex-column border shadow shadow-lg rounded col-12 col-lg-6 bg-body-tertiary">
+                        <div className="text-center d-flex flex-column mb-5">
+                            <div>
+                                <img
+                                    src={LogoName}
+                                    style={{
+                                        height: '2.5rem'
+                                    }}
+                                />
+                            </div>
+                            <div className="span" style={{fontSize:'0.75rem'}}>Computer Laboratory Assets and Inventory Management System</div>
                         </div>
 
 
-                        <div className="my-4">
+                        <div className="mb-3">
                             <div className="form-floating mb-3">
                                 <input type="text" className="form-control" id="username" disabled={authLoading} placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
                                 <label htmlFor="username">Username</label>
@@ -64,7 +84,8 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <button type="submit" className="btn btn-primary " disabled={authLoading}>
+                        <div className="d-flex justify-content-center">
+                            <button type="submit" className="btn btn-primary" disabled={authLoading}>
                             {
                                 authLoading ? (
                                     <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
@@ -73,6 +94,7 @@ export default function LoginPage() {
                                 )
                             }
                         </button>
+                        </div>
                     </form>
                 </div>
             </div>

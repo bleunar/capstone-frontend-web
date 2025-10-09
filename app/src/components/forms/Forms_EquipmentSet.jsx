@@ -141,7 +141,7 @@ export default function Item_EquipmentSet({ target_id }) {
     return (
         <>
             <div className="col p-1">
-                <div className="w-100 bg-secondary rounded position-relative cursor-pointer hover-show-source hover-hide-source" style={{ height: "15vh" }} onClick={() => toggleShowModal(!showModal)}>
+                <div className="w-100 bg-secondary position-relative cursor-pointer hover-show-source hover-hide-source" style={{ height: "15vh" }} onClick={() => toggleShowModal(!showModal)}>
                     
                     <div className="p-2 text-light d-flex position-absolute top-0  " style={{ left: "0px", bottom: "0px" }}>
                         <div style={{ fontSize: '1.25rem' }}>PC #<b>{target_id}</b></div>
@@ -386,7 +386,7 @@ function EquipmentComponentItem({ item_name, item_serial_number, item_type, hand
                     </div>
                     <div className="d-flex gap-2">
                         <div className="px-2">
-                            <span className={`badge text-light text-bg-${item_serial_number ? "success" : "danger"}`}>{item_serial_number ? "Active" : "Missing"}</span>
+                            <span className={`badge text-light text-bg-${item_serial_number && item_name ? "success" : "danger"}`}>{item_serial_number && item_name ? "Active" : "Missing"}</span>
                         </div>
                         <div className="btn btn-outline-secondary border-0 btn-sm" data-bs-toggle="collapse" data-bs-target={`#collapse_${item_type}`} aria-expanded="false" aria-controls={`collapse_${item_type}`} ref={(el) => (refShowSerialNumber.current[refKey] = el)}>
                             <i className="bi bi-chevron-down"></i>

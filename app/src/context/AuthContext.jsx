@@ -67,6 +67,7 @@ export function AuthProvider({ children }) {
       await fetchAccount();
       await fetchAccountSettings();
     } catch (error) {
+      console.log(error)
       let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetch all account data";
       throw msg;
     } finally {

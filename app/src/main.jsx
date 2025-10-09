@@ -10,6 +10,9 @@ import './assets/scss/main.scss'
 // boostrap icons
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+// react-toastify styles
+import 'react-toastify/dist/ReactToastify.css';
+
 // custom style classes
 import './assets/css/main.css'
 
@@ -19,20 +22,15 @@ import { ThemeProvider } from './context/ThemeContext.jsx';
 import { NotificationProvider } from './context/NotificationContext.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  // <StrictMode>
+  <StrictMode>
     <BrowserRouter>
-
-      {
-        // wrapper for the Authentication, Notification, and Theme contexts
-        <AuthProvider>
-          <NotificationProvider>
-            <ThemeProvider>
-              <App />
-            </ThemeProvider>
-          </NotificationProvider>
-        </AuthProvider>
-      }
-
+      <AuthProvider>
+        <NotificationProvider>
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
+        </NotificationProvider>
+      </AuthProvider>
     </BrowserRouter>
-  // </StrictMode>,
+  </StrictMode>
 )

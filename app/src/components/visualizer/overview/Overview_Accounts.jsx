@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { BarVisualizer, PieVisualizer, LineVisualizer } from "../visualizer/Visualizers";
+import { BarVisualizer, PieVisualizer, LineVisualizer } from "../Visualizers";
 
 export default function OverviewAccounts() {
     const nav = useNavigate()
@@ -61,8 +61,8 @@ export default function OverviewAccounts() {
     return (
         <div className="container">
             <div className="d-flex my-3 justify-content-start">
-                <div className="btn btn-primary" onClick={() => nav("/dashboard/manage")}>
-                    <i class="bi bi-caret-left-fill"></i> Return 
+                <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
+                    <i className="bi bi-caret-left-fill"></i> Return 
                 </div>
             </div>
 

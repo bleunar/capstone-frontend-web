@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-// component to display items in a list
+// component used to display items in a list (for managing entities)
 export default function ItemVisualizer({ data, mode = "list", card_content, list_content, handleCheckboxChange, checkList, preview_button = null, edit_button = null }) {
     const [itemMode, setItemMode] = useState("list")
 
@@ -37,8 +37,6 @@ export default function ItemVisualizer({ data, mode = "list", card_content, list
             </>
         )
     }
-
-
 
     return (
         <div className="col">

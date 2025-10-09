@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from "react"
-import Pagination from "../misc/Pagination"
+import Pagination from "../general/Pagination.jsx"
 import { useSystemAPI } from "../../hooks/useSystemAPI"
 import ItemVisualizer from "../visualizer/ItemVisualizer"
 import { useNotifications } from "../../context/NotificationContext"
+import { useErrorHandler } from "../../hooks/useErrorHandler.jsx"
 import { FormsAdd_Accounts, FormsEdit_Accounts, FormsView_Accounts, ItemVisualizerContent_Accounts } from "../forms/Forms_Accounts"
 import { useNavigate } from "react-router-dom"
 
@@ -10,14 +11,16 @@ const TARGET_ENTITY = "accounts"
 const TARGET_NAME = "Account"
 const PAGINATION_ITEMS = 12
 
-export default function AccountsManagement({showReturnButton = true}) {
+export default function AccountsManagement({ showReturnButton = true }) {
     const nav = useNavigate()
     const [data, setData] = useState([])
+    const [loading, setLoading] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
     const [currentPage, setCurrentPage] = useState(1);
     const [itemVisualMode, toggleItemVisualMode] = useState("card")
     const { notifyError } = useNotifications()
-    const { API_GET } = useSystemAPI()
+    const { handleError } = useErrorHandler()
+    const { API_GET, API_LOADING } = useSystemAPI()
 
     // search logic
     const processedData = useMemo(() => {
@@ -58,11 +61,15 @@ export default function AccountsManagement({showReturnButton = true}) {
 
     // fetch data 
     const handleFetchData = async () => {
+        setLoading(true)
         try {
             const result = await API_GET(`/${TARGET_ENTITY}/`)
-            setData(result)
+            setData(result || [])
         } catch (error) {
-            notifyError(`failed to fetch ${TARGET_ENTITY} data`)
+            handleError(error)
+            notifyError(`Failed to fetch ${TARGET_NAME} data`)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -79,7 +86,7 @@ export default function AccountsManagement({showReturnButton = true}) {
                 showReturnButton && (
 
                     <div className="d-flex my-3 justify-content-start align-items-center">
-                        <div className="btn btn-primary" onClick={() => nav("/dashboard/manage")}>
+                        <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
                             <i class="bi bi-caret-left-fill"></i> Return
                         </div>
                     </div>
@@ -124,7 +131,15 @@ export default function AccountsManagement({showReturnButton = true}) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {
+                                    {(loading || API_LOADING) ? (
+                                        <tr>
+                                            <td colSpan="5" className="text-center py-4">
+                                                <div className="spinner-border text-primary" role="status">
+                                                    <span className="visually-hidden">Loading accounts...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ) : (
                                         currentPageData && currentPageData.map((item, key) => (
                                             <ItemVisualizer
                                                 key={key}
@@ -136,13 +151,19 @@ export default function AccountsManagement({showReturnButton = true}) {
                                                 edit_button={<FormsEdit_Accounts target_id={item.id} refetch_data={handleFetchData} />}
                                             />
                                         ))
-                                    }
+                                    )}
                                 </tbody>
                             </table>
                         </div>
                     ) : (
                         <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-gap-4">
-                            {
+                            {(loading || API_LOADING) ? (
+                                <div className="col-12 text-center py-4">
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="visually-hidden">Loading accounts...</span>
+                                    </div>
+                                </div>
+                            ) : (
                                 currentPageData && currentPageData.map((item, key) => (
                                     <ItemVisualizer
                                         key={key}
@@ -154,7 +175,7 @@ export default function AccountsManagement({showReturnButton = true}) {
                                         edit_button={<FormsEdit_Accounts target_id={item.id} refetch_data={handleFetchData} />}
                                     />
                                 ))
-                            }
+                            )}
                         </div>
                     )
                 }
