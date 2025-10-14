@@ -41,13 +41,6 @@ export default function LoginPage() {
                     src={BackgroundImage}
                     style={{objectPosition: 'top'}}
                 />
-                <div
-                    className="position-absolute top-0 start-0 vw-100 vh-100"
-                    style={{
-                        backgroundColor: "rgba(50, 100, 50, 0.75)",
-                        zIndex: 1,
-                    }}
-                ></div>
 
                 <div className="position-relative container d-flex justify-content-center align-items-center h-100" style={{zIndex: '99999'}}>
                     <form onSubmit={handleLogin} className="p-4 d-flex flex-column border shadow shadow-lg rounded col-12 col-lg-6 bg-body-tertiary text-dark">
