@@ -1,4 +1,4 @@
-export default function DashboardContentManager(){
+export default function DashboardManager(){
     return (
         <>Manager Dashboard</>
     )

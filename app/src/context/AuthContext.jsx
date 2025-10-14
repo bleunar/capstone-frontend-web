@@ -17,7 +17,8 @@ export function AuthProvider({ children }) {
   const nav = useNavigate()
 
   // used to track the authentication state
-  const [authLoading, setAuthLoading] = useState(true)
+  const [authLoading, setAuthLoading] = useState(false)
+  const [initialized, setInitialized] = useState(false)
   const [authenticated, setAuthenticated] = useState(false);
 
   // user data fetched from database
@@ -28,6 +29,7 @@ export function AuthProvider({ children }) {
 
   // login function
   async function login(username, password) {
+    setAuthLoading(true);
     try {
       const response = await axiosClient.post(TARGET_AUTH + "/auth/login", { username, password });
       const token = response.data.tkn_acc;
@@ -42,12 +44,15 @@ export function AuthProvider({ children }) {
     } catch (error) {
       let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when logging in";
       throw msg;
+    } finally {
+      setAuthLoading(false);
     }
   }
 
 
   // logout function
   async function logout() {
+    setAuthLoading(true)
     try {
       await axiosClient.post(TARGET_AUTH + "/auth/logout");
       localStorage.clear();
@@ -57,6 +62,8 @@ export function AuthProvider({ children }) {
     } catch (error) {
       let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when logging out";
       throw msg;
+    } finally {
+      setAuthLoading(false);
     }
   }
 
@@ -137,7 +144,7 @@ export function AuthProvider({ children }) {
   // authentication check on component load
   useEffect(() => {
     const init = async () => {
-      setAuthLoading(true);
+      setInitialized(false);
       try {
         // attempt to refresh token
         const refreshed = await attempt_refresh();
@@ -181,7 +188,7 @@ export function AuthProvider({ children }) {
         setCredentials(null);
         nav("/");
       } finally {
-        setAuthLoading(false);
+        setInitialized(true);
       }
     };
 
@@ -192,6 +199,7 @@ export function AuthProvider({ children }) {
   const values = {
     // check state of authentication
     authLoading,
+    initialized,
     authenticated,
 
     // stores the user's account and settings fetched from the database

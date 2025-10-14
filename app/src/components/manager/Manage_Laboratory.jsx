@@ -4,7 +4,7 @@ import { useSystemAPI } from "../../hooks/useSystemAPI";
 
 export default function LabManagement() {
     const { API_GET } = useSystemAPI();
-    const [locations, setLocations] = useState([]);
+    const [locations, setLocations] = useState(["CL 1"]);
 
     const fetchLocations = async () => {
         try {
@@ -16,7 +16,7 @@ export default function LabManagement() {
     };
 
     useEffect(() => {
-        fetchLocations();
+        // fetchLocations();
     }, []);
 
     return <LocationTabs locations={locations} />;
@@ -33,6 +33,8 @@ function LocationTabs({ locations }) {
 
     return (
         <>
+            <div className="h2">Manage Computer Laboratory</div>
+
             <div className="d-flex justify-content-between mb-3 flex-wrap-reverse">
                 <ul className="nav nav-pills gap-2 justify-content-start w-100" id="myTab" role="tablist">
                     {locations.map((item) => (
@@ -44,7 +46,7 @@ function LocationTabs({ locations }) {
                                 role="tab"
                                 onClick={() => setActiveTab(item.id)}
                             >
-                                {item.name}
+                                {item}
                             </button>
                         </li>
                     ))}
@@ -99,14 +101,14 @@ function LabEquipments({ location_id }) {
     }, [location_id]);
 
     if (loading) return (
-            <div className="d-flex justify-content-center align-items-center w-100">
+        <div className="d-flex justify-content-center align-items-center w-100">
 
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
-        )
-    
+        </div>
+    )
+
 
     return (
         <>

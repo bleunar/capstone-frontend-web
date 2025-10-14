@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import ComponentProtector from "./ComponentProtector";
+import ComponentProtector from "../general/ComponentProtector";
 
 export default function ManagerController({ showReturnButton = false }) {
     const nav = useNavigate()

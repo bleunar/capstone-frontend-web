@@ -1,4 +1,4 @@
-export default function DashboardContentTechnician(){
+export default function DashboardTechnician(){
     return (
         <>Technicians Dashboard</>
     )

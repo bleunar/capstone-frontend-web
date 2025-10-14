@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import VisualCounter from "../VisualCounter.jsx";
 import { BarVisualizer, PieVisualizer, LineVisualizer } from "../Visualizers.jsx";
 import { useDashboardAnalytics } from "../../../hooks/useDashboardAnalytics.jsx";
+import GeneralSystemInfromation from "./GeneralSystemInformation.jsx";
 
 export default function DashboardHomeRoot() {
     const { loading, dashboardData } = useDashboardAnalytics();
@@ -131,36 +132,26 @@ export default function DashboardHomeRoot() {
                 ))}
             </div>
 
-            {/* Quick Actions */}
-            <div className="mb-4">
-                <div className="h4">Quick Actions</div>
-                <div className="d-flex flex-wrap justify-content-start align-items-center gap-2">
-                    <div className="btn btn-secondary">Manage Accounts</div>
-                    <div className="btn btn-secondary">Manage Equipments</div>
-                    <div className="btn btn-secondary">Manage Computer Lab</div>
-                    <div className="btn btn-secondary">Manage Equipment</div>
-                    <div className="btn btn-secondary">Manage Equipment Sets</div>
-                </div>
-            </div>
+            <GeneralSystemInfromation />
 
             {/* Analytics Charts */}
             <div className="mb-4 row row-cols-1 row-cols-lg-3">
                 <div className="col p-2">
-                    <LineVisualizer 
-                        title="Account Activity" 
-                        data={chartData.lineData || fallbackLineData} 
+                    <LineVisualizer
+                        title="Account Activity"
+                        data={chartData.lineData || fallbackLineData}
                     />
                 </div>
                 <div className="col p-2">
-                    <BarVisualizer 
-                        title="Equipment by Location" 
-                        data={chartData.barData || fallbackBarData} 
+                    <BarVisualizer
+                        title="Equipment by Location"
+                        data={chartData.barData || fallbackBarData}
                     />
                 </div>
                 <div className="col p-2">
-                    <PieVisualizer 
-                        title="Equipment Status" 
-                        data={chartData.pieData || fallbackPieData} 
+                    <PieVisualizer
+                        title="Equipment Status"
+                        data={chartData.pieData || fallbackPieData}
                     />
                 </div>
             </div>

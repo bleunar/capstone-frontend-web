@@ -25,11 +25,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <NotificationProvider>
-          <ThemeProvider>
+        <ThemeProvider>
+          <NotificationProvider>
             <App />
-          </ThemeProvider>
-        </NotificationProvider>
+          </NotificationProvider>
+        </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>

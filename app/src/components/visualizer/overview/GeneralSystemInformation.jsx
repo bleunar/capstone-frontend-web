@@ -86,7 +86,7 @@ export default function GeneralSystemInfromation() {
 
     return (
         <>
-            <div className="progress-stacked mb-3 shadow" style={{ height: "4vh" }} data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Equipment Status Overview">
+            <div className="progress-stacked shadow" style={{ height: "4vh" }} data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Equipment Status Overview">
                 {parsedData.map((item, index) => (
                     <div
                         key={index}
@@ -110,7 +110,7 @@ export default function GeneralSystemInfromation() {
                     </div>
                 ))}
             </div>
-
+            <div className="text muted">(Total: 50)</div>
         </>
     )
 }

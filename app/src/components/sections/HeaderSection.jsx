@@ -8,8 +8,7 @@ export default function HeaderSection() {
 
     return (
         <>
-            <div className="container-fluid m-0 text-white bg-primary py-5">
-                <div className="container">
+            <div className="container-fluid m-0 py-4">
                     <div className="row row-cols-1 row-cols-md-2 text-center">
                         <div className="text-md-start flex-fill">
                             <div className="h4 fw-bold mb-0 text-capitalize">
@@ -27,7 +26,6 @@ export default function HeaderSection() {
                             }
                         </div>
                     </div>
-                </div>
             </div>
         </>
     )

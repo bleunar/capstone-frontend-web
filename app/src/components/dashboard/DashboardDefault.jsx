@@ -1,4 +1,4 @@
-export default function DashboardContentGuest(){
+export default function DashboardDefault(){
     return (
         <>Default Dashboard</>
     )
