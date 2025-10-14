@@ -39,6 +39,7 @@ export default function LoginPage() {
                 <img
                     className="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
                     src={BackgroundImage}
+                    style={{objectPosition: 'top'}}
                 />
                 <div
                     className="position-absolute top-0 start-0 vw-100 vh-100"
