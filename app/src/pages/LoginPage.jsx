@@ -35,7 +35,7 @@ export default function LoginPage() {
 
     return (
         <>
-            <div className="vh-100 vw-100 position-relative">
+            <div className="vh-100 vw-100 position-relative" data-bs-theme="light">
                 <img
                     className="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
                     src={BackgroundImage}
@@ -49,7 +49,7 @@ export default function LoginPage() {
                 ></div>
 
                 <div className="position-relative container d-flex justify-content-center align-items-center h-100" style={{zIndex: '99999'}}>
-                    <form onSubmit={handleLogin} className="p-4 d-flex flex-column border shadow shadow-lg rounded col-12 col-lg-6 bg-body-tertiary">
+                    <form onSubmit={handleLogin} className="p-4 d-flex flex-column border shadow shadow-lg rounded col-12 col-lg-6 bg-body-tertiary text-dark">
                         <div className="text-center d-flex flex-column mb-5">
                             <div>
                                 <img

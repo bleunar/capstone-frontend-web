@@ -4,8 +4,8 @@ import { useAuth } from "./AuthContext";
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const {settings} = useAuth();
-  const [theme, setTheme] = useState();
+  const {settings, authenticated} = useAuth();
+  const [theme, setTheme] = useState('light');
 
   // set theme when account settings data is updated
   useEffect(() => {
@@ -15,9 +15,10 @@ export function ThemeProvider({ children }) {
 
   // set theme when account settings data is updated
   useEffect(() => {
-    if(settings) {
-
+    if(authenticated && settings) {
       setTheme(settings && settings.enable_dark_mode == 1 ? "dark" : "light")
+    } else {
+      setTheme('light')
     }
   }, [settings])
 
