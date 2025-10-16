@@ -4,185 +4,149 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 /*
-  na gamit dya para mag handle sang authentication kag authorization
+  handles authentication and authorization logic for the app.
 */
 
-const TARGET_AUTH = import.meta.env.VITE_TARGET_AUTH; // Authentication API URL
-const TARGET_SYSTEM = import.meta.env.VITE_TARGET_SYSTEM; // System API URL
-
-// authentication context
+const TARGET_AUTH = import.meta.env.VITE_TARGET_AUTH; // Flask Auth API
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const nav = useNavigate()
+  const nav = useNavigate();
 
-  // used to track the authentication state
-  const [authLoading, setAuthLoading] = useState(false)
-  const [initialized, setInitialized] = useState(false)
+  // Authentication states
+  const [authLoading, setAuthLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [credentials, setCredentials] = useState(null);
 
-  // user data fetched from database
-  const [credentials, setCredentials] = useState({})
-  const [account, setAccount] = useState({});
+  // User data
+  const [profile, setProfile] = useState({});
+  const [credential, setCredential] = useState({});
   const [settings, setSettings] = useState({});
 
-
-  // login function
+  
   async function login(username, password) {
     setAuthLoading(true);
     try {
-      const response = await axiosClient.post(TARGET_AUTH + "/auth/login", { username, password });
-      const token = response.data.tkn_acc;
+      const response = await axiosClient.post(`${TARGET_AUTH}/login`, {
+        username,
+        password,
+      });
 
+      const token = response.data.data?.tkn_acc; // Flask returns wrapped JSON
       if (token) {
-        localStorage.setItem("accessToken", token)
+        localStorage.setItem("accessToken", token);
         setAuthenticated(true);
-        fetchAccountData()
-        nav("/dashboard")
+        await fetchAccountData();
+        nav("/dashboard");
+      } else {
+        throw new Error("No access token received.");
       }
-
     } catch (error) {
-      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when logging in";
+      const msg =
+        error?.response?.data?.error ||
+        error.message ||
+        "Unknown error during login.";
+      console.error("[AUTH] Login failed:", msg);
       throw msg;
     } finally {
       setAuthLoading(false);
     }
   }
 
-
-  // logout function
+  
   async function logout() {
-    setAuthLoading(true)
+    setAuthLoading(true);
     try {
-      await axiosClient.post(TARGET_AUTH + "/auth/logout");
-      localStorage.clear();
-      setAuthenticated(false)
-      nav("/")
-      notifyConfirm("Logged out sucessfully")
+      await axiosClient.post(`${TARGET_AUTH}/logout`, {}, { withCredentials: true });
     } catch (error) {
-      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when logging out";
-      throw msg;
+      console.warn("[AUTH] Logout warning:", error);
     } finally {
+      localStorage.clear();
+      setAuthenticated(false);
+      setCredentials(null);
+      nav("/");
       setAuthLoading(false);
     }
   }
 
-
-  // fetches all account data (account and settings)
+  
   async function fetchAccountData() {
-    try {
-      await fetchAccount();
-      await fetchAccountSettings();
-    } catch (error) {
-      console.log(error)
-      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetch all account data";
-      throw msg;
-    } finally {
-    }
+    await Promise.all([
+      fetchAccountProfile(),
+      fetchAccountCredential(),
+      fetchAccountSettings(),
+    ]);
   }
 
-
-  // fetches account data only
-  async function fetchAccount() {
-    try {
-      const result = await axiosClient.get(TARGET_SYSTEM + "/accounts/me");
-      setAccount(result.data.data[0]);
-    } catch (error) {
-      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetching account data";
-      throw msg;
-    }
+  
+  async function fetchAccountProfile() {
+    const res = await axiosClient.get(`${TARGET_AUTH}/me/profile`);
+    setProfile(res.data.data);
   }
 
+  
+  async function fetchAccountCredential() {
+    const res = await axiosClient.get(`${TARGET_AUTH}/me/credential`);
+    setCredential(res.data.data);
+  }
 
-  // fetches account settings data only
+  
   async function fetchAccountSettings() {
-    try {
-      const result = await axiosClient.get(TARGET_SYSTEM + "/account_settings/");
-      setSettings(result.data.data);
-    } catch (error) {
-      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetching account settings";
-      throw msg;
-    }
+    const res = await axiosClient.get(`${TARGET_AUTH}/me/settings`);
+    setSettings(res.data.data);
   }
 
-
-  // handle account update
-  async function editAccount(data) {
-    try {
-      await axiosClient.put(TARGET_AUTH + "/accounts/", { data });
-      return true
-    } catch (error) {
-      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetching account settings";
-      console.log('[AUTH] ERROR: edit account data. ' + msg)
-      throw msg;
-    }
+  
+  async function editAccountProfile(data) {
+    await axiosClient.put(`${TARGET_AUTH}/me/profile`, data);
+    await fetchAccountProfile();
+    return true;
   }
 
+  
+  async function editAccountCredential(data) {
+    await axiosClient.put(`${TARGET_AUTH}/me/credential`, data);
+    await fetchAccountCredential();
+    return true;
+  }
 
-  // handle account settings update
+  
   async function editAccountSettings(data) {
-    try {
-      await axiosClient.put(TARGET_SYSTEM + "/account_settings", { ...data });
-      fetchAccountSettings()
-      return true
-    } catch (error) {
-      let msg = error?.response?.data?.error ? error.response.data.error : "unknown error when fetching account settings";
-      console.log('[AUTH] ERROR: edit account settings. ' + msg)
-      throw msg;
-    }
+    await axiosClient.put(`${TARGET_AUTH}/me/settings`, data);
+    await fetchAccountSettings();
+    return true;
   }
 
-
-  // fetch account data only if authenticated
+  
   useEffect(() => {
     if (authenticated) {
-      fetchAccountData()
+      fetchAccountData().catch((err) =>
+        console.error("[AUTH] Fetch data error:", err)
+      );
     }
-  }, [authenticated])
+  }, [authenticated]);
 
-
-  // authentication check on component load
+  
   useEffect(() => {
     const init = async () => {
       setInitialized(false);
       try {
-        // attempt to refresh token
+        // Try refreshing token using cookie
         const refreshed = await attempt_refresh();
-
-        // if token refresh attemt failed
-        if (!refreshed) {
-          localStorage.clear();
-          localStorage.setItem("session_ended", "yas");
-          setAuthenticated(false);
-          setCredentials(null);
-          nav("/");
-        }
+        if (!refreshed) throw new Error("Refresh failed.");
 
         const token = localStorage.getItem("accessToken");
-
         if (token && token.split(".").length === 3) {
-          try {
-            const decoded = jwtDecode(token);
-            setCredentials(decoded);
-            localStorage.removeItem("session_ended");
-            setAuthenticated(true);
-          } catch (decodeErr) {
-            console.error("[JWT DECODE FAILED]", decodeErr);
-            console.warn("[INVALID TOKEN FORMAT]");
-            localStorage.clear();
-            setAuthenticated(false);
-            setCredentials(null);
-            nav("/");
-          }
+          const decoded = jwtDecode(token);
+          setCredentials(decoded);
+          setAuthenticated(true);
+          localStorage.removeItem("session_ended");
         } else {
-          console.warn("[INVALID TOKEN FORMAT]");
-          localStorage.clear();
-          setAuthenticated(false);
-          setCredentials(null);
-          nav("/");
+          throw new Error("Invalid or missing access token.");
         }
       } catch (error) {
-        console.error("[AUTH INIT ERROR]", error);
+        console.warn("[AUTH INIT ERROR]", error);
         localStorage.clear();
         setAuthenticated(false);
         setCredentials(null);
@@ -195,38 +159,30 @@ export function AuthProvider({ children }) {
     init();
   }, [nav]);
 
-
+  
   const values = {
-    // check state of authentication
     authLoading,
     initialized,
     authenticated,
+    credentials,
 
-    // stores the user's account and settings fetched from the database
-    account,
+    profile,
+    credential,
     settings,
 
-    // core authentication functions
     login,
     logout,
 
-    // fetches account and settings data
-    fetchAccountData,
-
-    // manual fetch for account and settings
-    fetchAccount,
+    fetchAccountProfile,
+    fetchAccountCredential,
     fetchAccountSettings,
 
-    // edit functions for account and settings
-    editAccount,
+    editAccountProfile,
+    editAccountCredential,
     editAccountSettings,
-  }
+  };
 
-  return (
-    <AuthContext.Provider value={values}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

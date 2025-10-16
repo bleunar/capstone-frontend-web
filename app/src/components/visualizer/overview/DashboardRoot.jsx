@@ -107,9 +107,9 @@ export default function DashboardHomeRoot() {
 
     if (loading) {
         return (
-            <div className="d-flex justify-content-center align-items-center py-5">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading analytics data...</span>
+            <div className="row px-2 mb-4 row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 placeholder-glow">
+                <div className="col p-1" style={{height: '8vh'}}>
+                    <span class="placeholder rounded h-100"></span>
                 </div>
             </div>
         );

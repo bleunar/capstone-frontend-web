@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
-import DefaultLayout from "../layout/DefaultLayout.jsx";
+import AdminLayout from "../layout/AdminLayout.jsx";
 import LoadingPage from "../general/LoadingPage.jsx";
+import DefaultLayout from "../layout/DefaultLayout.jsx";
 
 // controls the layout according to the user's access level 
 export function LayoutController() {
@@ -17,7 +18,7 @@ export function LayoutController() {
     if(!verified && authLoading && !authenticated) return <LoadingPage />
 
     switch (account.access_level) {
-        case 0: return <DefaultLayout />
+        case 0: return <AdminLayout />
         case 1: return <DefaultLayout />
     }
 }

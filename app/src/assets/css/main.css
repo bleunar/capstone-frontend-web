@@ -1,68 +1,68 @@
 /* fallback */
 @font-face {
-    font-family: 'Material Symbols Outlined';
-    font-style: normal;
-    font-weight: 400;
-    src: url('../fonts/mat_ui_.woff2') format('woff2');
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/mat_ui_.woff2') format('woff2');
 }
 
 .material-symbols-outlined {
-    font-family: 'Material Symbols Outlined';
-    font-weight: lighter;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -moz-osx-font-smoothing: grayscale;
+  font-family: 'Material Symbols Outlined';
+  font-weight: lighter;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.border-check *{
-    border: 1px solid red;
+.border-check * {
+  border: 1px solid red;
 }
 
 
 /* SHOW ON HOVER */
 .hover-show-source {
-    transition: 200ms ease-in-out;
+  transition: 200ms ease-in-out;
 }
 
 .hover-show-client {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease;
 }
 
 .hover-show-source:hover .hover-show-client {
-    opacity: 1;
-    visibility: visible;
+  opacity: 1;
+  visibility: visible;
 }
 
 
 /* opposite of "SHOW ON HOVER" */
 .hover-hide-source {
-    transition: 200ms ease-in-out;
+  transition: 200ms ease-in-out;
 }
 
 .hover-hide-client {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.2s ease;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease;
 }
 
 .hover-hide-source:hover .hover-hide-client {
-    opacity: 0;
-    visibility: hidden;
+  opacity: 0;
+  visibility: hidden;
 }
 
 
 .cursor-pointer {
-    cursor: pointer;
-    transition: 200ms ease-in-out;
+  cursor: pointer;
+  transition: 200ms ease-in-out;
 }
 
 /* SCROLLBAR */
@@ -72,10 +72,10 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 0.5rem;
-  
+
   /* Ensure scroll area doesn’t shift content when scrollbar appears */
   scrollbar-gutter: stable;
-  
+
   /* Optional: smooth scrolling */
   scroll-behavior: smooth;
 }

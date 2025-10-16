@@ -76,17 +76,15 @@ export default function GeneralSystemInfromation() {
 
     if (loading) {
         return (
-            <div className="d-flex justify-content-center align-items-center py-5">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading equipment data...</span>
-                </div>
-            </div>
+            <p class="placeholder-glow">
+                <span class="placeholder w-100 shadow rounded" style={{height: '4vh'}}></span>
+            </p>
         )
     }
 
     return (
         <>
-            <div className="progress-stacked shadow" style={{ height: "4vh" }} data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Equipment Status Overview">
+            <div className="progress-stacked shadow mb-3" style={{ height: "4vh" }} data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Equipment Status Overview">
                 {parsedData.map((item, index) => (
                     <div
                         key={index}
@@ -110,7 +108,6 @@ export default function GeneralSystemInfromation() {
                     </div>
                 ))}
             </div>
-            <div className="text muted">(Total: 50)</div>
         </>
     )
 }
