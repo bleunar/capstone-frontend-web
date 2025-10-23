@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
 import { useSystemAPI } from "../../hooks/useSystemAPI";
 import { useNavigate } from "react-router-dom";
+import ReturnButton from "../general/ReturnButton";
 
-export default function History_Accounts({showReturnButton = true}) {
+export default function History_Accounts() {
     const { API_GET } = useSystemAPI();
     const nav = useNavigate()
     const [history, setHistory] = useState([]);
@@ -86,20 +87,12 @@ export default function History_Accounts({showReturnButton = true}) {
 
     return (
         <>
-            <div className="container">
-                {
-                    showReturnButton && (
+            <ReturnButton to="/dashboard/manage" />
 
-                        <div className="d-flex my-3 justify-content-start align-items-center">
-                            <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
-                                <i class="bi bi-caret-left-fill"></i> Return
-                            </div>
-                        </div>
-                    )
-                }
+            <div className="container-fluid">
 
                 {/* Controls */}
-                <div className="d-flex flex-wrap gap-2 mb-4 p-3 border rounded bg-body-tertiary">
+                <div className="d-flex flex-wrap gap-2 mb-4 p-3 rounded bg-body-tertiary shadow">
                     {/* Search */}
                     <input
                         type="text"
@@ -168,7 +161,7 @@ export default function History_Accounts({showReturnButton = true}) {
 
                         {/* sort */}
                         <button
-                            className="btn btn-outline-secondary"
+                            className="btn btn-outline-primary"
                             onClick={() =>
                                 setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
                             }
@@ -178,7 +171,7 @@ export default function History_Accounts({showReturnButton = true}) {
                     </div>
                 </div>
 
-                <div className="pb-3 rounded border bg-body-tertiary overflow-hidden">
+                <div className="pb-3 rounded border bg-body-tertiary overflow-hidden shadow">
                     <table className="table table-sm table-responsive">
                         <thead>
                             <tr className="text-center">
@@ -212,7 +205,7 @@ export default function History_Accounts({showReturnButton = true}) {
                     {totalPages > 1 && (
                         <div className="d-flex justify-content-center align-items-center gap-3 mt-3">
                             <button
-                                className="btn btn-outline-secondary"
+                                className="btn btn-outline-primary"
                                 disabled={currentPage === 1}
                                 onClick={() => setCurrentPage((p) => p - 1)}
                             >
@@ -222,7 +215,7 @@ export default function History_Accounts({showReturnButton = true}) {
                                 Page {currentPage} / {totalPages}
                             </span>
                             <button
-                                className="btn btn-outline-secondary"
+                                className="btn btn-outline-primary"
                                 disabled={currentPage === totalPages}
                                 onClick={() => setCurrentPage((p) => p + 1)}
                             >

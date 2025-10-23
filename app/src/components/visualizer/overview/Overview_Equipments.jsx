@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { BarVisualizer, PieVisualizer, LineVisualizer } from "../Visualizers";
 import ReturnButton from "../../general/ReturnButton";
 
-export default function OverviewAccounts() {
+export default function OverviewEquipments() {
     const nav = useNavigate()
 
     const barData = {
@@ -63,7 +63,13 @@ export default function OverviewAccounts() {
         <>
             <ReturnButton to="/dashboard/manage" />
 
-            <div className="container-fluid">
+            <div className="container">
+                <div className="d-flex my-3 justify-content-start">
+                    <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
+                        <i className="bi bi-caret-left-fill"></i> Return
+                    </div>
+                </div>
+
                 <div className="row row-cols-3">
                     <div className="col p-2">
                         <LineVisualizer title="Account Activiy" data={lineData} />

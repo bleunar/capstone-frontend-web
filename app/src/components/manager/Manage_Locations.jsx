@@ -5,12 +5,13 @@ import ItemVisualizer from "../visualizer/ItemVisualizer"
 import { useNotifications } from "../../context/NotificationContext"
 import { FormsAdd_Locations, FormsEdit_Locations, FormsView_Locations, ItemVisualizerContent_Locations } from "../forms/Forms_Locations"
 import { useNavigate } from "react-router-dom"
+import ReturnButton from "../general/ReturnButton"
 
 const TARGET_ENTITY = "locations"
 const TARGET_NAME = "Location"
 const PAGINATION_ITEMS = 12
 
-export default function LocationsManagement({showReturnButton = true}) {
+export default function LocationsManagement() {
     const [data, setData] = useState([])
     const [searchQuery, setSearchQuery] = useState("")
     const [currentPage, setCurrentPage] = useState(1);
@@ -74,116 +75,97 @@ export default function LocationsManagement({showReturnButton = true}) {
 
 
     return (
-        <div className="container">
-            {
-                showReturnButton && (
+        <>
+            <ReturnButton to="/dashboard/manage" />
 
-                    <div className="d-flex my-3 justify-content-start align-items-center">
-                        <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
-                            <i class="bi bi-caret-left-fill"></i> Return
-                        </div>
-                    </div>
-                )
-            }
-
-            <div className="mb-3">
-                <div className="d-flex justify-content-end gap-2">
-                    <input type="searchQuery" className="form-control" style={{ maxWidth: "500px" }} id="search_query_input" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
-
-                    <div className="btn btn-outline-secondary border-secondary-subtles" onClick={() => handleToggleItemVisualMode()}>
-                        {
-                            itemVisualMode == "list" ? (
-                                <i className="bi bi-grid"></i>
-                            ) : (
-                                <i className="bi bi-list-ul"></i>
-                            )
-                        }
-                    </div>
-
-
-                    {
-                        <FormsAdd_Locations refetch_data={handleFetchData} />
-                    }
-
-                </div>
-            </div>
-
-            <div className="p-3 rounded bg-body-tertiary shadow border">
+            <div className="container-fluid">
                 <div className="mb-3">
+                    <div className="d-flex justify-content-end gap-2">
+                        <input type="searchQuery" className="form-control" style={{ maxWidth: "500px" }} id="search_query_input" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
 
-                    <select class="form-select" aria-label="Default select example" style={{ maxWidth: "500px" }}>
-                        <option selected>Open this select menu</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                    </select>
-
-                </div>
-
-                {
-                    itemVisualMode == "list" ? (
-                        <div className="py-2 table-responsive rounded bg-body">
-                            <table className="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Description</th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        currentPageData && currentPageData.map((item, key) => (
-                                            <ItemVisualizer
-                                                key={key}
-                                                data={item}
-                                                mode="list"
-                                                card_content={<ItemVisualizerContent_Locations data={item} mode="card" />}
-                                                list_content={<ItemVisualizerContent_Locations data={item} mode="list" />}
-                                                preview_button={<FormsView_Locations target_id={item.id} refetch_data={handleFetchData} />}
-                                                edit_button={<FormsEdit_Locations target_id={item.id} refetch_data={handleFetchData} />}
-                                            />
-                                        ))
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4">
+                        <div className="btn btn-outline-secondary border-secondary-subtles" onClick={() => handleToggleItemVisualMode()}>
                             {
-                                currentPageData && currentPageData.map((item, key) => (
-                                    <ItemVisualizer
-                                        key={key}
-                                        data={item}
-                                        mode="card"
-                                        card_content={<ItemVisualizerContent_Locations data={item} mode="card" />}
-                                        list_content={<ItemVisualizerContent_Locations data={item} mode="list" />}
-                                        preview_button={<FormsView_Locations target_id={item.id} refetch_data={handleFetchData} />}
-                                        edit_button={<FormsEdit_Locations target_id={item.id} refetch_data={handleFetchData} />}
-                                    />
-                                ))
+                                itemVisualMode == "list" ? (
+                                    <i className="bi bi-grid"></i>
+                                ) : (
+                                    <i className="bi bi-list-ul"></i>
+                                )
                             }
                         </div>
-                    )
-                }
 
-                {
-                    currentPageData.length == 0 ? (
-                        <div className="p text-center">No Data</div>
-                    ) : ""
-                }
 
-                <div className="d-flex justify-content-center mt-3">
-                    {totalPages > 1 && (
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={setCurrentPage}
-                        />
-                    )}
+                        {
+                            <FormsAdd_Locations refetch_data={handleFetchData} />
+                        }
+
+                    </div>
+                </div>
+
+                <div className="p-3">
+                    {
+                        itemVisualMode == "list" ? (
+                            <div className="py-2 table-responsive rounded bg-body">
+                                <table className="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            currentPageData && currentPageData.map((item, key) => (
+                                                <ItemVisualizer
+                                                    key={key}
+                                                    data={item}
+                                                    mode="list"
+                                                    card_content={<ItemVisualizerContent_Locations data={item} mode="card" />}
+                                                    list_content={<ItemVisualizerContent_Locations data={item} mode="list" />}
+                                                    preview_button={<FormsView_Locations target_id={item.id} refetch_data={handleFetchData} />}
+                                                    edit_button={<FormsEdit_Locations target_id={item.id} refetch_data={handleFetchData} />}
+                                                />
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4">
+                                {
+                                    currentPageData && currentPageData.map((item, key) => (
+                                        <ItemVisualizer
+                                            key={key}
+                                            data={item}
+                                            mode="card"
+                                            card_content={<ItemVisualizerContent_Locations data={item} mode="card" />}
+                                            list_content={<ItemVisualizerContent_Locations data={item} mode="list" />}
+                                            preview_button={<FormsView_Locations target_id={item.id} refetch_data={handleFetchData} />}
+                                            edit_button={<FormsEdit_Locations target_id={item.id} refetch_data={handleFetchData} />}
+                                        />
+                                    ))
+                                }
+                            </div>
+                        )
+                    }
+
+                    {
+                        currentPageData.length == 0 ? (
+                            <div className="p text-center">No Data</div>
+                        ) : ""
+                    }
+
+                    <div className="d-flex justify-content-center mt-3">
+                        {totalPages > 1 && (
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={setCurrentPage}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
-
+        </>
     )
 }

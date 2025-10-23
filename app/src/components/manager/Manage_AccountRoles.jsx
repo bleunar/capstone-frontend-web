@@ -4,13 +4,14 @@ import { useSystemAPI } from "../../hooks/useSystemAPI"
 import ItemVisualizer from "../visualizer/ItemVisualizer"
 import { useNotifications } from "../../context/NotificationContext"
 import { FormsAdd_AccountRoles, FormsEdit_AccountRoles, FormsView_AccountRoles, ItemVisualizerContent_AccountRoles } from "../forms/Forms_AccountRoles"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import ReturnButton from "../general/ReturnButton";
 
 const TARGET_ENTITY = "account_roles"
 const TARGET_NAME = "Account Role"
 const PAGINATION_ITEMS = 12
 
-export default function AccountRolesManagement({showReturnButton = true}) {
+export default function AccountRolesManagement() {
     const [data, setData] = useState([])
     const [searchQuery, setSearchQuery] = useState("")
     const [currentPage, setCurrentPage] = useState(1);
@@ -60,7 +61,6 @@ export default function AccountRolesManagement({showReturnButton = true}) {
     const handleFetchData = async () => {
         try {
             const result = await API_GET(`/${TARGET_ENTITY}/`)
-            // console.log(result)
             setData(result)
         } catch (error) {
             notifyError(`failed to fetch ${TARGET_ENTITY} data`)
@@ -75,107 +75,100 @@ export default function AccountRolesManagement({showReturnButton = true}) {
 
 
     return (
-        <div className="container">
-            {
-                showReturnButton && (
 
-                    <div className="d-flex my-3 justify-content-start align-items-center">
-                        <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
-                            <i class="bi bi-caret-left-fill"></i> Return
-                        </div>
-                    </div>
-                )
-            }
+        <>
+            <ReturnButton to="/dashboard/manage" />
 
-            <div className="mb-3">
-                <div className="d-flex justify-content-end gap-2">
-                    <input type="searchQuery" className="form-control" style={{ maxWidth: "500px" }} id="search_query_input" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
+            <div className="container">
+                <div className="mb-3">
+                    <div className="d-flex justify-content-end gap-2">
+                        <input type="searchQuery" className="form-control" style={{ maxWidth: "500px" }} id="search_query_input" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
 
-                    <div className="btn btn-outline-secondary border-secondary-subtles" onClick={() => handleToggleItemVisualMode()}>
-                        {
-                            itemVisualMode == "list" ? (
-                                <i className="bi bi-grid"></i>
-                            ) : (
-                                <i className="bi bi-list-ul"></i>
-                            )
-                        }
-                    </div>
-
-
-                    {
-                        <FormsAdd_AccountRoles refetch_data={handleFetchData} />
-                    }
-
-                </div>
-            </div>
-
-
-            <div className="p-3 rounded bg-body-tertiary shadow border">
-                {
-                    itemVisualMode == "list" ? (
-                        <div className="table-py-2 table-responsive rounded bg-body">
-                            <table className="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Access Levels</th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        currentPageData && currentPageData.map((item, key) => (
-                                            <ItemVisualizer
-                                                key={key}
-                                                data={item}
-                                                mode="list"
-                                                card_content={<ItemVisualizerContent_AccountRoles data={item} mode="card" />}
-                                                list_content={<ItemVisualizerContent_AccountRoles data={item} mode="list" />}
-                                                preview_button={<FormsView_AccountRoles target_id={item.id} refetch_data={handleFetchData} />}
-                                                edit_button={<FormsEdit_AccountRoles target_id={item.id} refetch_data={handleFetchData} />}
-                                            />
-                                        ))
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-gap-4">
+                        <div className="btn btn-outline-secondary border-secondary-subtles" onClick={() => handleToggleItemVisualMode()}>
                             {
-                                currentPageData && currentPageData.map((item, key) => (
-                                    <ItemVisualizer
-                                        key={key}
-                                        data={item}
-                                        mode="card"
-                                        card_content={<ItemVisualizerContent_AccountRoles data={item} mode="card" />}
-                                        list_content={<ItemVisualizerContent_AccountRoles data={item} mode="list" />}
-                                        preview_button={<FormsView_AccountRoles target_id={item.id} refetch_data={handleFetchData} />}
-                                        edit_button={<FormsEdit_AccountRoles target_id={item.id} refetch_data={handleFetchData} />}
-                                    />
-                                ))
+                                itemVisualMode == "list" ? (
+                                    <i className="bi bi-grid"></i>
+                                ) : (
+                                    <i className="bi bi-list-ul"></i>
+                                )
                             }
                         </div>
-                    )
-                }
 
-                {
-                    currentPageData.length == 0 ? (
-                        <div className="p text-center">No Data</div>
-                    ) : ""
-                }
 
-                <div className="d-flex justify-content-center mt-3">
-                    {totalPages > 1 && (
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={setCurrentPage}
-                        />
-                    )}
+                        {
+                            <FormsAdd_AccountRoles refetch_data={handleFetchData} />
+                        }
+
+                    </div>
                 </div>
+
+
+                <div className="p-3">
+                    {
+                        itemVisualMode == "list" ? (
+                            <div className="table-py-2 table-responsive rounded bg-body">
+                                <table className="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Access Levels</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            currentPageData && currentPageData.map((item, key) => (
+                                                <ItemVisualizer
+                                                    key={key}
+                                                    data={item}
+                                                    mode="list"
+                                                    card_content={<ItemVisualizerContent_AccountRoles data={item} mode="card" />}
+                                                    list_content={<ItemVisualizerContent_AccountRoles data={item} mode="list" />}
+                                                    preview_button={<FormsView_AccountRoles target_id={item.id} refetch_data={handleFetchData} />}
+                                                    edit_button={<FormsEdit_AccountRoles target_id={item.id} refetch_data={handleFetchData} />}
+                                                />
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-gap-4">
+                                {
+                                    currentPageData && currentPageData.map((item, key) => (
+                                        <ItemVisualizer
+                                            key={key}
+                                            data={item}
+                                            mode="card"
+                                            card_content={<ItemVisualizerContent_AccountRoles data={item} mode="card" />}
+                                            list_content={<ItemVisualizerContent_AccountRoles data={item} mode="list" />}
+                                            preview_button={<FormsView_AccountRoles target_id={item.id} refetch_data={handleFetchData} />}
+                                            edit_button={<FormsEdit_AccountRoles target_id={item.id} refetch_data={handleFetchData} />}
+                                        />
+                                    ))
+                                }
+                            </div>
+                        )
+                    }
+
+                    {
+                        currentPageData.length == 0 ? (
+                            <div className="p text-center">No Data</div>
+                        ) : ""
+                    }
+
+                    <div className="d-flex justify-content-center mt-3">
+                        {totalPages > 1 && (
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={setCurrentPage}
+                            />
+                        )}
+                    </div>
+                </div>
+
             </div>
-
-        </div>
-
+        </>
     )
 }

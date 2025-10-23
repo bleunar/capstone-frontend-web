@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation, Link } from "react-router-dom";
-import { FaBars, FaHome, FaNetworkWired, FaClipboardList, FaUserEdit } from "react-icons/fa";
+import { FaBars, FaHome, FaNetworkWired, FaClipboardList, FaUserEdit, FaToolbox, FaWrench, FaDoorClosed, FaDoorOpen } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import { useNotifications } from "../../context/NotificationContext";
 import Logo from '../../assets/img/claims-name-white.png'
@@ -9,7 +9,7 @@ import LogoSmall from '../../assets/img/claims-logo.svg'
 export default function DefaultLayout() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { account, authLoading, authenticated, logout } = useAuth()
+    const { credential, authLoading, authenticated, logout } = useAuth()
     const { notifyConfirm } = useNotifications();
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
@@ -42,7 +42,7 @@ export default function DefaultLayout() {
     const sidebarLinks = [
         { icon: <FaHome />, label: "Dashboard", path: "/dashboard" },
         { icon: <FaNetworkWired />, label: "Labs & Computers", path: "./labs" },
-        { icon: <FaClipboardList />, label: "Reports", path: "./reports" },
+        { icon: <FaClipboardList />, label: "Activities", path: "./activities" },
     ];
 
     const handleSidebarChevron = () => {
@@ -51,7 +51,7 @@ export default function DefaultLayout() {
 
 
     return (
-        <div style={{ height: "100vh", backgroundColor: "#f6f8fa" }}>
+        <div style={{ height: "100vh" }}>
             <header
                 style={{
                     position: "fixed",
@@ -95,28 +95,29 @@ export default function DefaultLayout() {
                 }}
             >
                 <div>
-                    <div className="d-flex flex-column text-center m-3 p-2 rounded" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onClick={() => handleSidebarChevron()} style={{ backgroundColor: '#004d26' }}>
-                        <i className="bi bi-person-circle fs-1"></i>
-                        <h5 className="h5 text-white">
-                            {account?.username || "Loading..."}
-                        </h5>
-                        <p>{account?.role_name || "Fetching role..."}</p>
+                    <div className="text-light bg-primary d-flex flex-column text-center m-3 p-2 rounded">
+                        <div className="w-100 bg-primary" data-bs-toggle="collapse" data-bs-target="#collapse_profile" aria-expanded="false" aria-controls="collapse_profile" onClick={() => handleSidebarChevron()} style={{ backgroundColor: '#004d26' }}>
+                            <i className="bi bi-person-circle fs-1"></i>
+                            <h5 className="h5 mb-0 fw-bold">
+                                {credential?.username || "Loading..."}
+                            </h5>
+                            <p className="mb-0">{credential?.role_name || "Fetching role..."}</p>
+                        </div>
 
-                        <div class="collapse" id="collapseExample">
-                            <div className="d-flex flex-column gap-2">
-                                <Link to="./settings/account">
-                                    <div className="btn btn-outline-secondary">
-                                        <FaUserEdit size={18} />
-                                        Edit Profile
-                                    </div>
+                        <div class="collapse" id="collapse_profile">
+                            <div className="d-flex flex-column gap-2 pt-3">
+                                <Link to="./settings" className="btn btn-secondary btn-sm">
+                                    <FaUserEdit size={18} />
+                                    Settings
                                 </Link>
-                                <div className="btn btn-outline-danger" onClick={HandleLogout}>
+                                <div className="btn btn-danger btn-sm" onClick={HandleLogout}>
+                                    <FaDoorOpen size={18} />
                                     Logout
                                 </div>
                             </div>
                         </div>
 
-                        <div className="btn btn-sm">
+                        <div className="btn btn-sm bg-primary" data-bs-toggle="collapse" data-bs-target="#collapse_profile" aria-expanded="false" aria-controls="collapse_profile" onClick={() => handleSidebarChevron()} style={{ backgroundColor: '#004d26' }}>
                             {
                                 sidebarUserOptionChevronOrientation ? <i class="bi bi-chevron-compact-up"></i> : <i class="bi bi-chevron-compact-down"></i>
                             }
@@ -124,24 +125,19 @@ export default function DefaultLayout() {
                     </div>
                     {/* Sidebar Navigation */}
                     <nav style={{ marginTop: "1rem" }}>
-                        <ul style={{ listStyle: "none", padding: "0 1rem" }}>
-                            {sidebarLinks.map((link, i) => {
-                                const isActive = location.pathname === link.path;
-                                return (
-                                    <li key={i} style={{ marginBottom: "0.75rem" }}>
-                                        <button
-                                            className="btn btn-secondary w-100 d-flex justify-content-start gap-2"
-                                            onClick={() => {
-                                                navigate(link.path);
-                                                if (isMobile) setSidebarOpen(false);
-                                            }}
-                                        >
-                                            {React.cloneElement(link.icon, { size: 18 })}
-                                            {!isMobile && link.label}
-                                        </button>
-                                    </li>
-                                );
-                            })}
+                        <ul style={{ listStyle: "none", padding: "0 1rem" }} className="d-flex flex-column gap-2">
+                            <Link to="/dashboard" className="btn btn-secondary w-100 d-flex justify-content-start align-items-center gap-2">
+                                <FaHome /> Dashboard
+                            </Link>
+                            <Link to="./labs" className="btn btn-secondary w-100 d-flex justify-content-start align-items-center gap-2">
+                                <FaNetworkWired /> Computers & Labs
+                            </Link>
+                            <Link to="./manage" className="btn btn-secondary w-100 d-flex justify-content-start align-items-center gap-2">
+                                <FaWrench /> Manage
+                            </Link>
+                            <Link to="./activities" className="btn btn-secondary w-100 d-flex justify-content-start align-items-center gap-2">
+                                <FaClipboardList /> Activities
+                            </Link>
                         </ul>
                     </nav>
                 </div>
@@ -153,7 +149,6 @@ export default function DefaultLayout() {
                     marginTop: "60px",
                     padding: "25px",
                     minHeight: "100vh",
-                    backgroundColor: "#f6f8fa",
                     transition: "all 0.3s ease",
                 }}
             >

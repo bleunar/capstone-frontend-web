@@ -9,7 +9,6 @@ const BASE_OBJECT = {
     id: "",
     name: "",
     description: "",
-    equipment_layout: "",
     created_at: "",
     updated_at: "",
 };
@@ -171,7 +170,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             refetch_data();
             setShowModal(false);
         } catch (error) {
-            notifyError(`Failed to update ${TARGET_NAME}`, error);
+            notifyError(error);
         }
     };
 
@@ -248,24 +247,6 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
                     />
                 </div>
 
-
-                <div className="mb-3">
-                    <label htmlFor="equipment_layout" className="form-label">Equipment Layout</label>
-                    <select className="form-select" aria-label="Default select example"
-                        onChange={handleInputChange}
-                        value={data.equipment_layout}
-                        id='equipment_layout'
-                        name='equipment_layout'
-                        required
-                    >
-                        <option selected hidden>Select Equipment Layout</option>
-                        <option value="row-cols-lg-6">6 Equipments per Table</option>
-                        <option value="row-cols-lg-5">5 Equipments per Table</option>
-                        <option value="row-cols-lg-4">4 Equipments per Table</option>
-                        <option value="row-cols-lg-3">3 Equipments per Table</option>
-                    </select>
-                </div>
-
                 <div className="d-flex justify-content-end">
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </div>
@@ -310,31 +291,6 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
                         <div className="col text-muted border-end">Description</div>
                         <div className="col text-capitalize">{data?.description}</div>
                     </div>
-                    
-
-
-                    <div className="row row-cols-2 p-2">
-                        <div className="col text-muted border-end">Equipment Layout</div>
-                        <div className="col text-capitalize">
-                            {
-                                data?.equipment_layout == "row-cols-lg-6" ? "6 Equipments per Table" : ""
-                            }
-                            {
-                                data?.equipment_layout == "row-cols-lg-5" ? "5 Equipments per Table" : ""
-                            }
-                            {
-                                data?.equipment_layout == "row-cols-lg-4" ? "4 Equipments per Table" : ""
-                            }
-                            {
-                                data?.equipment_layout == "row-cols-lg-3" ? "3 Equipments per Table" : ""
-                            }
-                            {
-                                !data.equipment_layout ? "Not Set" : ""
-                            }
-                        </div>
-                    </div>
-
-
                 </div>
 
                 <div className="mb-3 text-center rounded" style={{ fontSize: "0.75rem" }}>

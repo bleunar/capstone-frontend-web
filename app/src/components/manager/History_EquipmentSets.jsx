@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
 import { useSystemAPI } from "../../hooks/useSystemAPI";
 import { useNavigate } from "react-router-dom";
+import ReturnButton from "../general/ReturnButton";
 
-export default function History_Accounts({showReturnButton = true}) {
+export default function History_Accounts() {
     const { API_GET } = useSystemAPI();
     const nav = useNavigate()
     const [history, setHistory] = useState([]);
@@ -86,18 +87,9 @@ export default function History_Accounts({showReturnButton = true}) {
 
     return (
         <>
+            <ReturnButton to="/dashboard/manage" />
+
             <div className="container">
-                {
-                    showReturnButton && (
-
-                        <div className="d-flex my-3 justify-content-start align-items-center">
-                            <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
-                                <i class="bi bi-caret-left-fill"></i> Return
-                            </div>
-                        </div>
-                    )
-                }
-
                 {/* Controls */}
                 <div className="d-flex flex-wrap gap-2 mb-4 p-3 border rounded bg-body-tertiary">
                     {/* Search */}

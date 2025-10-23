@@ -7,7 +7,6 @@ export default function FormModal({ children, title, onClose, key, size = 'md' }
             show={true}
             onHide={onClose}
             size={size}
-            centered
         >
             <Modal.Header closeButton>
                 <div className="h4 m-0 text-capitalize">{title}</div>

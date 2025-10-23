@@ -7,17 +7,17 @@ import DefaultLayout from "../layout/DefaultLayout.jsx";
 // controls the layout according to the user's access level 
 export function LayoutController() {
     const [verified, setVerified] = useState(false)
-    const { account, authLoading, authenticated } = useAuth()
+    const { credential, authLoading, authenticated } = useAuth()
 
     useEffect(() => {
-        if(account){
+        if(credential){
             setVerified(true)
         }
-    }, [account])
+    }, [credential])
 
-    if(!verified && authLoading && !authenticated) return <LoadingPage />
+    if(!verified && authLoading && !authenticated) return <LoadingPage full_height />
 
-    switch (account.access_level) {
+    switch (credential?.role_access_level) {
         case 0: return <AdminLayout />
         case 1: return <DefaultLayout />
     }

@@ -9,6 +9,14 @@ import LoadingPage from './components/general/LoadingPage.jsx';
 import { LayoutController } from './components/controller/LayoutController.jsx';
 import { DashboardController } from './components/controller/DashboardController.jsx';
 import LabManagement from './components/manager/Manage_Laboratory.jsx';
+import ManagerController from './components/controller/ManagerController.jsx';
+import ActivitiesPage from './pages/ActivitiesPage.jsx';
+import PageProtector from './components/general/PageProtector.jsx';
+import AccountsManagement from './components/manager/Manage_Accounts.jsx';
+import AccountRolesManagement from './components/manager/Manage_AccountRoles.jsx';
+import History_Accounts from './components/manager/History_Accounts.jsx';
+import OverviewAccounts from './components/visualizer/overview/Overview_Accounts.jsx';
+import LocationsManagement from './components/manager/Manage_Locations.jsx';
 
 function App() {
   const { initialized } = useAuth();
@@ -36,6 +44,49 @@ function App() {
           <Route index element={<DashboardController />} />
           <Route path="labs" element={<LabManagement />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="activities" element={<PageProtector component={<ActivitiesPage />} required_access_level={[0, 1, 2]} />} />
+          <Route path="manage" element={<PageProtector component={<ManagerController />} required_access_level={[0, 1, 2]} />} />
+
+          <Route
+            path="manage/accounts"
+            element={
+              <PageProtector
+                component={<AccountsManagement />}
+                required_access_level={[0, 1, 2]} />} />
+
+          <Route
+            path="manage/accounts/roles"
+            element={
+              <PageProtector
+                component={<AccountRolesManagement />}
+                required_access_level={[0]} />} />
+
+          <Route
+            path="manage/accounts/activities"
+            element={<PageProtector
+              component={<History_Accounts />}
+              required_access_level={[0, 1, 2]} />} />
+
+          <Route
+            path="manage/accounts/overview"
+            element={<PageProtector
+              component={<OverviewAccounts />}
+              required_access_level={[0, 1, 2]} />} />
+
+          <Route
+            path="manage/lab/"
+            element={<PageProtector
+              component={<LocationsManagement />}
+              required_access_level={[0, 1, 2]} />} />
+
+
+          <Route
+            path="manage/lab/equipments"
+            element={<PageProtector
+              component={<LabManagement />}
+              required_access_level={[0, 1, 2]} />} />
+
+
           <Route path="*" element={
             <ErrorPage
               title="Page not Found"
@@ -43,8 +94,6 @@ function App() {
             />
           } />
         </Route>
-
-
 
 
         <Route path="/unauthorized"

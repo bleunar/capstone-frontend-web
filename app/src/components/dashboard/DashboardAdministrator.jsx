@@ -24,18 +24,20 @@ const COLORS = {
 };
 
 const KPI = ({ title, value, icon, color, bg }) => (
-    <Card className="kpi-card shadow-sm text-dark" style={{ backgroundColor: bg }}>
-        <Card.Body>
-            <div className="kpi-icon" style={{ color }}>{icon}</div>
-            <h6 className="kpi-title">{title}</h6>
-            <div className="kpi-value">{value ?? 0}</div>
-        </Card.Body>
-    </Card>
+    <div className="col p-1">
+        <Card className="kpi-card shadow-sm text-dark h-100" style={{ backgroundColor: bg }}>
+            <Card.Body>
+                <div className="kpi-icon" style={{ color }}>{icon}</div>
+                <h6 className="kpi-title">{title}</h6>
+                <div className="kpi-value">{value ?? 0}</div>
+            </Card.Body>
+        </Card>
+    </div>
 );
 
 
 const ChartCard = ({ title, children }) => (
-    <Card className="chart-card shadow-sm">
+    <Card className="chart-card shadow-sm bg-body-tertiary h-100">
         <Card.Body>
             <Card.Title className="fw-bold text-center mb-3">{title}</Card.Title>
             {children}
@@ -45,7 +47,6 @@ const ChartCard = ({ title, children }) => (
 
 
 export default function DashboardAdministrator() {
-    const [stats, setStats] = useState({});
     const [computerPartStatus, setComputerPartStatus] = useState([]);
     const [labsComputers, setLabsComputers] = useState([]);
     const [damageMissing, setDamageMissing] = useState([]);
@@ -58,24 +59,26 @@ export default function DashboardAdministrator() {
         { title: "Operational Parts", value: 67, icon: <FaUserCheck />, color: "#59a14f", bg: "#eaf7ef" },
         { title: "Not Operational", value: 67, icon: <FaUserTimes />, color: "#e15759", bg: "#fdecec" },
         { title: "Total Users", value: 67, icon: <FaUsers />, color: "#0D6EFD", bg: "#eaf2ff" },
-        { title: "Reports Submitted", value: 67, icon: <FaFileAlt />, color: "#9c6ade", bg: "#f4ecfb" },
-        { title: "Damaged Equipments", value: 67, icon: <FaExclamationTriangle />, color: "#ff9d76", bg: "#fff2eb" },
-        { title: "Missing Equipments", value: 67, icon: <FaQuestionCircle />, color: "#e15759", bg: "#fdecec" },
+        { title: "Reports", value: 67, icon: <FaFileAlt />, color: "#9c6ade", bg: "#f4ecfb" },
+        { title: "Damaged", value: 67, icon: <FaExclamationTriangle />, color: "#ff9d76", bg: "#fff2eb" },
+        { title: "Missing", value: 67, icon: <FaQuestionCircle />, color: "#e15759", bg: "#fdecec" },
     ];
 
     return (
         <>
-            <Container fluid className="my-4">
+            <div className="container-fluid mb-3">
                 {/* KPIs */}
-                <div className="kpi-row mb-4">
+                <div className="row row-cols-2 row-cols-sm-3 row-cols-xl-4 mb-3">
                     {summaryItems.map((item, idx) => (
                         <KPI key={idx} {...item} />
                     ))}
                 </div>
+            </div>
 
-                <Row className="g-4">
+            <div className="container-fluid mb-3">
+                <Row className="row-cols-1 row-cols-lg-2 row-cols-xxl-3">
                     {/* Computer Status Pie */}
-                    <Col xs={12} md={6}>
+                    <Col className="p-1">
                         <ChartCard title="Computer Status">
                             <ResponsiveContainer width="100%" height={320}>
                                 <PieChart>
@@ -102,7 +105,7 @@ export default function DashboardAdministrator() {
                     </Col>
 
                     {/* Computer Parts Status Bar */}
-                    <Col xs={12} md={6}>
+                    <Col className="p-1">
                         <ChartCard title="Computer Parts Status">
                             <ResponsiveContainer width="100%" height={320}>
                                 <BarChart data={computerPartStatus} margin={{ top: 20, right: 20, left: 0, bottom: 20 }} barCategoryGap="30%" barGap={8}>
@@ -121,7 +124,7 @@ export default function DashboardAdministrator() {
                     </Col>
 
                     {/* Labs & Computers */}
-                    <Col xs={12} md={6}>
+                    <Col className="p-1">
                         <ChartCard title="Labs & Computers">
                             <ResponsiveContainer width="100%" height={340}>
                                 <BarChart data={labsComputers} margin={{ top: 30, right: 30, left: 20, bottom: 40 }}>
@@ -137,7 +140,7 @@ export default function DashboardAdministrator() {
                     </Col>
 
                     {/* Damage vs Missing */}
-                    <Col xs={12} md={6}>
+                    <Col className="p-1">
                         <ChartCard title="Damage vs Missing per Lab">
                             <ResponsiveContainer width="100%" height={340}>
                                 <AreaChart data={damageMissing} margin={{ top: 20, right: 20, left: 0, bottom: 20 }}>
@@ -163,7 +166,7 @@ export default function DashboardAdministrator() {
                         </ChartCard>
                     </Col>
                 </Row>
-            </Container>
+            </div>
         </>
     )
 }

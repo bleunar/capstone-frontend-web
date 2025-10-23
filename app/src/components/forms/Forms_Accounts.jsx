@@ -11,6 +11,8 @@ const BASE_OBJECT = {
     first_name: "",
     middle_name: "",
     last_name: "",
+    gender: "",
+    birth_date: "",
     email: "",
     username: "",
     password: "",
@@ -36,7 +38,7 @@ export const FormsAdd_Accounts = ({ mode = 'button', refetch_data }) => {
                 </i><div className="d-none d-md-block">Add</div>
             </button>
             {showModal && (
-                <FormModal onClose={() => setShowModal(false)}>
+                <FormModal size='lg' onClose={() => setShowModal(false)}>
                     <FormsInputField submitMode="add" showModal={showModal} setShowModal={setShowModal} refetch_data={refetch_data} />
                 </FormModal>
             )}
@@ -62,7 +64,7 @@ export const FormsView_Accounts = ({ target_id, mode = 'button', refetch_data })
                 </button>
 
                 {showModal && (
-                    <FormModal onClose={() => setShowModal(false)}>
+                    <FormModal size='lg' onClose={() => setShowModal(false)}>
                         <FormsView target_id={target_id} refetch_data={refetch_data} setShowModal={setShowModal} />
                     </FormModal>
                 )}
@@ -86,7 +88,7 @@ export const FormsEdit_Accounts = ({ target_id, mode = 'button', refetch_data })
             </button>
 
             {showModal && (
-                <FormModal key={target_id} onClose={() => setShowModal(false)}>
+                <FormModal size='lg' key={target_id} onClose={() => setShowModal(false)}>
                     <FormsInputField target_id={target_id} submitMode='edit' showModal setShowModal={setShowModal} refetch_data={refetch_data} />
                 </FormModal>
             )}
@@ -108,7 +110,7 @@ export const FormsDelete_Accounts = ({ target_id, target_name = "", refetch_data
             setParentShowModal(false);
             refetch_data();
         } catch (error) {
-            notifyError(`Failed to delete ${TARGET_NAME}`, error);
+            notifyError(`${error.message}`);
         }
     };
 
@@ -136,7 +138,7 @@ export const FormsDelete_Accounts = ({ target_id, target_name = "", refetch_data
             </button>
 
             {showModal && (
-                <FormModal key={target_id} title="Confirm Deletion" onClose={() => setShowModal(false)} size='sm'>
+                <FormModal size='sm' key={target_id} title="Confirm Deletion" onClose={() => setShowModal(false)}>
                     <div className="text-center">
                         <p>Are you sure you want to permanently delete <strong>{target_name}</strong>?</p>
                         <p className="text-danger">This action cannot be undone.</p>
@@ -176,27 +178,26 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             refetch_data();
             setShowModal(false);
         } catch (error) {
-            notifyError(`Failed to update ${TARGET_NAME}`, error);
+            notifyError(`${error.message}`);
         }
     };
 
     const handleAdd = async () => {
         try {
             const result = await API_POST(`/${TARGET_ENTITY}/`, data)
-            console.log(result)
             refetch_data();
             setShowModal(false);
             setData(BASE_OBJECT);
             notifyConfirm(`${TARGET_NAME} added successfuly`)
         } catch (error) {
-            notifyError(`Failed to Create ${TARGET_NAME}`, error)
-            console.error(error)
+            notifyError(`${error.message}`)
         }
     };
 
     // handling submissions
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (submitMode == "add") {
             handleAdd();
         } else {
@@ -244,7 +245,80 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
 
             <div className="h4 text-center mb-4">{submitMode == "add" ? "New" : "Update"} {TARGET_NAME}</div>
 
+            <div className="h4">Profile</div>
+
             <form onSubmit={handleSubmit} noValidate>
+
+                <div className="mb-4">
+                    <div className="container-fluid">
+                        <div className="row row-cols-1 row-cols-sm-3">
+                            <div className="col p-1">
+                                <input className="form-control"
+                                    type="text"
+                                    id="first_name"
+                                    name="first_name"
+                                    value={data.first_name}
+                                    onChange={handleInputChange}
+                                    placeholder='First Name'
+                                    required
+                                />
+                            </div>
+                            <div className="col p-1">
+                                <input className="form-control"
+                                    type="text"
+                                    id="middle_name"
+                                    name="middle_name"
+                                    value={data.middle_name}
+                                    onChange={handleInputChange}
+                                    placeholder='Middle Name'
+                                    required
+                                />
+                            </div>
+                            <div className="col p-1">
+                                <input className="form-control"
+                                    type="text"
+                                    id="last_name"
+                                    name="last_name"
+                                    value={data.last_name}
+                                    onChange={handleInputChange}
+                                    placeholder='Last Name'
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mb-4">
+                    <div className="container-fluid">
+                        <div className="row row-cols-1 row-cols-md-2">
+                            <div className="col p-1">
+                                <div className="mb-3">
+                                    <label htmlFor="gender" className="form-label">Gender</label>
+                                    <select className="form-select" aria-label="Default select example"
+                                    name='gender'
+                                    id='gender'
+                                    onChange={handleInputChange}
+                                    value={data.gender}>
+                                        <option selected hidden>Select Gender</option>
+                                        <option value="female">Female</option>
+                                        <option value="male">Male</option>
+                                        <option value="others">Others</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col p-1">
+                                <div className="mb-3">
+                                    <label htmlFor="birth_date" className="form-label">Birth Date</label>
+                                    <input type="date" className="form-control" id="birth_date" name="birth_date" onChange={handleInputChange} value={data.birth_date} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="h4">Credentials</div>
+
                 <div className="mb-3">
                     <label htmlFor="access_level" className="form-label">Role</label>
                     <select className="form-select" aria-label="Default select example"
@@ -263,39 +337,6 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
                     </select>
                 </div>
 
-                <div className="mb-3">
-                    <label htmlFor="first_name" className="form-label">Full Name</label>
-                    <div className="input-group mb-3">
-                    <input className="form-control"
-                        type="text"
-                        id="first_name"
-                        name="first_name"
-                        value={data.first_name}
-                        onChange={handleInputChange}
-                        placeholder='First Name'
-                        required
-                    />
-                    <input className="form-control"
-                        type="text"
-                        id="middle_name"
-                        name="middle_name"
-                        value={data.middle_name}
-                        onChange={handleInputChange}
-                        placeholder='Middle Name'
-                        required
-                    />
-                    <input className="form-control"
-                        type="text"
-                        id="last_name"
-                        name="last_name"
-                        value={data.last_name}
-                        onChange={handleInputChange}
-                        placeholder='Last Name'
-                        required
-                    />
-                    </div>
-                </div>
-
 
                 <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email</label>
@@ -312,28 +353,37 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
 
                 <div className="mb-3">
                     <label htmlFor="username" className="form-label">Username</label>
-                    <input className="form-control"
-                        type="text"
-                        id="username"
-                        name="username"
-                        value={data.username}
-                        onChange={handleInputChange}
-                        required
-                    />
+                    <div className="input-group">
+                        <input className="form-control"
+                            type="text"
+                            id="username"
+                            name="username"
+                            value={data.username}
+                            onChange={handleInputChange}
+                            required
+                        />
+                        <div className="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Generate Username">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </div>
+                    </div>
                 </div>
 
 
-                <div className="mb-3">
-                    <label htmlFor="password" className="form-label">{submitMode == 'edit' ? "Password (Leave blank to keep old password)" : "Default Password"}</label>
-                    <input className="form-control"
-                        type="text"
-                        id="password"
-                        name="password"
-                        value={data.password}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
+                {
+                    submitMode == 'add' && (
+                        <div className="mb-3">
+                            <label htmlFor="password" className="form-label">{submitMode == 'edit' ? "Password (Leave blank to keep old password)" : "Default Password"}</label>
+                            <input className="form-control"
+                                type="text"
+                                id="password"
+                                name="password"
+                                value={data.password}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                    )
+                }
 
 
 
@@ -345,7 +395,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
                         id='status'
                         name='status'
                     >
-                        <option selected hidden>Default(Active)</option>
+                        <option selected hidden>Default (Active)</option>
                         <option value="active">Active</option>
                         <option value="suspended">Suspended</option>
                     </select>
@@ -392,6 +442,18 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
                         <div className="col text-muted border-end">Full Name</div>
                         <div className="col">{data?.first_name} {data?.middle_name} {data?.last_name}</div>
                     </div>
+
+                    <div className="row row-cols-2 p-2">
+                        <div className="col text-muted border-end">Gender</div>
+                        <div className="col">{data?.gender ? data.gender : "..."}</div>
+                    </div>
+
+                    <div className="row row-cols-2 p-2">
+                        <div className="col text-muted border-end">Birth Date</div>
+                        <div className="col">{data?.birth_date ? data.birth_date : "..."}</div>
+                    </div>
+
+                    <hr />
 
                     <div className="row row-cols-2 p-2">
                         <div className="col text-muted border-end">Username</div>
@@ -442,10 +504,10 @@ export const ItemVisualizerContent_Accounts = ({ data, mode = "list" }) => {
     // preview mode for cards
     if (mode == 'card') {
         return (
-            <div className="">
+            <div>
                 <div className="p fw-bold text-capitalize">{data.first_name} {data.middle_name} {data.last_name}</div>
-                    <div className="p"> {data.username}</div>
-                    <div className="p"> {data.role_name}</div>
+                <div className="p"> {data.username}</div>
+                <div className="p"> {data.role_name}</div>
             </div>
         )
     }

@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
 
   // Authentication states
   const [authLoading, setAuthLoading] = useState(false);
+  const [authFetching, setAuthFetching] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState(null);
@@ -72,49 +73,63 @@ export function AuthProvider({ children }) {
 
   
   async function fetchAccountData() {
+    setAuthFetching(true)
     await Promise.all([
       fetchAccountProfile(),
       fetchAccountCredential(),
       fetchAccountSettings(),
     ]);
+    setAuthFetching(false)
   }
 
   
   async function fetchAccountProfile() {
+    setAuthFetching(true)
     const res = await axiosClient.get(`${TARGET_AUTH}/me/profile`);
     setProfile(res.data.data);
+    setAuthFetching(false)
   }
 
   
   async function fetchAccountCredential() {
+    setAuthFetching(true)
     const res = await axiosClient.get(`${TARGET_AUTH}/me/credential`);
     setCredential(res.data.data);
+    setAuthFetching(false)
   }
 
   
   async function fetchAccountSettings() {
+    setAuthFetching(true)
     const res = await axiosClient.get(`${TARGET_AUTH}/me/settings`);
     setSettings(res.data.data);
+    setAuthFetching(false)
   }
 
   
   async function editAccountProfile(data) {
+    setAuthFetching(true)
     await axiosClient.put(`${TARGET_AUTH}/me/profile`, data);
     await fetchAccountProfile();
+    setAuthFetching(false)
     return true;
   }
 
   
   async function editAccountCredential(data) {
+    setAuthFetching(true)
     await axiosClient.put(`${TARGET_AUTH}/me/credential`, data);
     await fetchAccountCredential();
+    setAuthFetching(false)
     return true;
   }
 
   
   async function editAccountSettings(data) {
+    setAuthFetching(true)
     await axiosClient.put(`${TARGET_AUTH}/me/settings`, data);
     await fetchAccountSettings();
+    setAuthFetching(false)
     return true;
   }
 
@@ -162,6 +177,7 @@ export function AuthProvider({ children }) {
   
   const values = {
     authLoading,
+    authFetching,
     initialized,
     authenticated,
     credentials,

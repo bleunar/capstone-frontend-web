@@ -14,12 +14,12 @@ export default function AdminLayout() {
     const closeOffcanvas = () => setShowOffcanvas(false);
 
     return (
-        <div className="d-flex vh-100 bg-body">
+        <div className="d-flex vh-100 vw-100 bg-body">
             <div
                 className={`d-none d-md-block ${sidebarExpanded ? "sidebar-expanded" : "sidebar-shrinked"
                     }`}
                 style={{
-                    width: sidebarExpanded ? "300px" : "67px",
+                    width: sidebarExpanded ? "225px" : "69px",
                     transition: "width 0.3s ease",
                 }}
             >
@@ -28,8 +28,8 @@ export default function AdminLayout() {
 
             <div className="flex-grow-1 d-flex flex-column min-vh-100">
                 <Navbar onToggleSidebar={toggleSidebar} onToggleOffcanvas={toggleOffcanvas} />
-                <main className="p-4 scroll-container flex-grow-1">
-                    <div className="h-auto w-100">
+                <main className="scroll-container flex-grow-1 overflow-y-scroll">
+                    <div className="h-auto p-3 p-md-4">
                         <Outlet />
                     </div>
                 </main>
@@ -42,7 +42,7 @@ export default function AdminLayout() {
 
 
 function Sidebar({ expanded }) {
-    const { account, logout } = useAuth();
+    const { credential, logout } = useAuth();
     const { notifyConfirm } = useNotifications();
     const HandleLogout = (e) => {
         e.preventDefault();
@@ -54,16 +54,10 @@ function Sidebar({ expanded }) {
     }
 
     return (
-        <div className="h-100 d-flex flex-column overflow-hidden p-2 bg-primary text-white">
+        <div className="h-100 d-flex flex-column overflow-hidden p-2 bg-primary text-white" style={{ transition: 'transform 0.3s ease-in-out' }}>
             <div className="d-flex justify-content-center align-items-center py-3">
                 <a href="/dashboard">
-                    {
-                        expanded ? (
-                            <img src={Logo} alt="logo" style={{ height: '2.5rem' }} />
-                        ) : (
-                            <img src={LogoSmall} alt="logo-sm" style={{ height: '2.5rem' }} />
-                        )
-                    }
+                    <img src={expanded ? Logo : LogoSmall} alt="logo" style={{ height: '2.5rem' }} />
                 </a>
             </div>
             <div className="w-100 border-bottom border-white"></div>
@@ -81,7 +75,7 @@ function Sidebar({ expanded }) {
                     <Link to="./labs" className="nav-link text-white d-flex flex-nowrap">
                         <span className="bi bi-pc-display me-2"></span>
                         {expanded && (
-                            <div className="p text-nowrap">Computer Laboratories</div>
+                            <div className="p text-nowrap">Laboratories</div>
                         )}
                     </Link>
                 </li>
@@ -90,6 +84,14 @@ function Sidebar({ expanded }) {
                         <span className="bi bi-activity me-2"></span>
                         {expanded && (
                             <div className="p text-nowrap">Activities</div>
+                        )}
+                    </Link>
+                </li>
+                <li className="nav-item">
+                    <Link to="./manage" className="nav-link text-white d-flex flex-nowrap">
+                        <span className="bi bi-wrench me-2"></span>
+                        {expanded && (
+                            <div className="p text-nowrap">Manage</div>
                         )}
                     </Link>
                 </li>
@@ -130,8 +132,8 @@ function Sidebar({ expanded }) {
                         expanded && (
 
                             <div className="text-start">
-                                <div className="p fw-bold">{account?.username}</div>
-                                <div className="p fw-light">{account?.email}</div>
+                                <div className="p fw-bold">{credential?.username}</div>
+                                <div className="p fw-light">{credential?.email}</div>
                             </div>
                         )
                     }
@@ -144,50 +146,83 @@ function Sidebar({ expanded }) {
 
 function MobileSidebar({ show, onClose }) {
     return (
-        <div
-            className={`offcanvas offcanvas-start d-flex d-md-none bg-primary ${show ? "show" : ""}`}
-            tabIndex="-1"
-            style={{ visibility: show ? "visible" : "hidden" }}
-        >
-            <div className="offcanvas-header">
-                <div className="d-flex justify-content-center align-items-center">
-                    <a href="/dashboard">
-                        
-                        <img src={Logo} alt="logo-sm" style={{ height: '1.5rem' }} />
+        <>
+            <div
+                className="custom-offcanvas d-flex d-md-none flex-column bg-primary text-white"
+                style={{
+                    transform: show ? "translateX(0)" : "translateX(-100%)",
+                    transition: "transform 0.3s ease-in-out",
+                }}
+            >
+                <div className="d-flex border-bottom border-white p-3 d-flex justify-content-between align-items-center">
+                    <a href="/dashboard" className="text-decoration-none text-white">
+                        <img src={Logo} alt="logo" style={{ height: "1.5rem" }} />
                     </a>
+                    <button
+                        type="button"
+                        className="btn-close btn-close-white"
+                        aria-label="Close"
+                        onClick={onClose}
+                    ></button>
                 </div>
-                <button
-                    type="button"
-                    className="btn-close text-reset"
+
+                <div className="offcanvas-body p-3">
+                    <ul className="nav nav-pills flex-column gap-3">
+                        <li className="nav-item">
+                            <Link
+                                to="/dashboard"
+                                className="nav-link text-white"
+                                onClick={onClose}
+                            >
+                                <i className="bi bi-grid me-2"></i> Dashboard
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link
+                                to="./labs"
+                                className="nav-link text-white"
+                                onClick={onClose}
+                            >
+                                <i className="bi bi-pc-display me-2"></i> Laboratories
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link
+                                to="./activities"
+                                className="nav-link text-white"
+                                onClick={onClose}
+                            >
+                                <i className="bi bi-activity me-2"></i> Activities
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link
+                                to="./manage"
+                                className="nav-link text-white"
+                                onClick={onClose}
+                            >
+                                <i className="bi bi-wrench me-2"></i> Manage
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {show && (
+                <div
+                    className="offcanvas-backdrop fade show"
                     onClick={onClose}
-                ></button>
-            </div>
-            <div className="offcanvas-body">
-                <ul className="nav nav-pills flex-column mb-auto gap-3">
-                    <li className="nav-item">
-                        <Link to="/dashboard" className="nav-link text-wrap text-white" onClick={onClose}>
-                            <i className="bi bi-grid me-2"></i> Dashboard
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link to="./labs" className="nav-link text-wrap text-white" onClick={onClose}>
-                            <i className="bi bi-pc-display me-2"></i> Computer Laboratory
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link to="/activities" className="nav-link text-wrap text-white" onClick={onClose}>
-                            <i className="bi bi-activity me-2"></i> Activities
-                        </Link>
-                    </li>
-                </ul>
-            </div>
-        </div>
+                    style={{ zIndex: 1040 }}
+                ></div>
+            )}
+        </>
     );
 }
 
 
+
 function Navbar({ onToggleSidebar, onToggleOffcanvas }) {
-    const { account, logout } = useAuth();
+    const { credential, logout } = useAuth();
     const { notifyConfirm } = useNotifications();
     const HandleLogout = (e) => {
         e.preventDefault();
@@ -199,17 +234,17 @@ function Navbar({ onToggleSidebar, onToggleOffcanvas }) {
     }
 
     return (
-        <nav className="navbar navbar-expand-lg px-2">
+        <nav className="navbar navbar-expand-lg px-2 bg-primary bg-opacity-75">
             <div className="container-fluid px-0">
                 <button
-                    className="btn d-md-none me-2"
+                    className="btn btn-sm d-md-none me-2"
                     onClick={onToggleOffcanvas}
                 >
                     <i className="bi bi-list"></i>
                 </button>
 
                 <button
-                    className="btn d-none d-md-inline me-2"
+                    className="btn btn-sm d-none d-md-inline me-2"
                     onClick={onToggleSidebar}
                 >
                     <i className="bi bi-layout-sidebar-inset"></i>
@@ -217,9 +252,9 @@ function Navbar({ onToggleSidebar, onToggleOffcanvas }) {
 
                 <div className="ms-auto d-flex align-items-center gap-2">
                     <div class="dropdown">
-                        <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <div className="d-flex">
-                                <div className="p text-muted fw-light me-2">{account?.username}</div>
+                                <div className="p text-muted me-2">{credential?.username}</div>
                                 <i className="bi bi-person-circle"></i>
                             </div>
                         </button>

@@ -8,8 +8,8 @@ import DashboardTechnician from "../dashboard/DashboardTechnician.jsx";
 
 // controls what dashboard is displayed according to the users access level
 export function DashboardController() {
-    const { account } = useAuth()
-    const user_access_level = account?.access_level;
+    const { credential } = useAuth()
+    const user_access_level = credential?.role_access_level;
 
     // displays the appropriate  of dashbaord based on the user's access level
     switch (user_access_level) {

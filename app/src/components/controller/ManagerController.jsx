@@ -1,116 +1,114 @@
 import { Link, useNavigate } from "react-router-dom";
 import ComponentProtector from "../general/ComponentProtector";
 
-export default function ManagerController({ showReturnButton = false }) {
-    const nav = useNavigate()
-
+export default function ManagerController() {
     return (
         <>
-            <div className="container">
+            <div className="container-fluid">
+                <div className="h2 fw-bold mb-4 text-center text-sm-start">Manage System</div>
+                <div className="row row-cols-1 row-cols-lg-2 row-cols-xxl-3">
+                    
+                    {/* ACCOUNT ROLE */}
+                    <ComponentProtector
+                        required_access_level={[0, 1, 2, 3]}
+                        component={(
+                            <div className="col p-2">
+                                <div className="card">
+                                    <div className="card-header fw-bold text-center bg-body-tertiary">
+                                        Accounts
+                                    </div>
+                                    <ul className="list-group text-start list-group-flush">
+                                        <Link to="./lab/overview" className="list-group-item d-flex justify-content-between flex-fill">
+                                            <div className="p">Overview</div>
+                                            <i className="bi bi-chevron-right"></i>
+                                        </Link>
 
-                {
-                    showReturnButton && (
+                                        <ComponentProtector required_access_level={[0,1]}
+                                            component={
+                                                (
+                                                    <Link to="./accounts/roles" className="list-group-item d-flex justify-content-between flex-fill">
+                                                        <div className="p">Account Roles</div>
+                                                        <i className="bi bi-chevron-right"></i>
+                                                    </Link>
+                                                )
+                                            }
+                                        />
 
-                        <div className="d-flex my-3 justify-content-start align-items-center">
-                            <div className="btn btn-primary" onClick={() => nav("/dashboard")}>
-                                <i class="bi bi-caret-left-fill"></i> Return Home
+                                        <Link to="./accounts" className="list-group-item d-flex justify-content-between flex-fill">
+                                            <div className="p">Accounts</div>
+                                            <i className="bi bi-chevron-right"></i>
+                                        </Link>
+
+
+                                        <ComponentProtector required_access_level={[0,1]}
+                                            component={
+                                                (
+                                                    <Link to="./accounts/activities" className="list-group-item d-flex justify-content-between flex-fill">
+                                                        <div className="p">Account Activities</div>
+                                                        <i className="bi bi-chevron-right"></i>
+                                                    </Link>
+                                                )
+                                            }
+                                        />
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                    )
-                }
+                        )} />
 
-                <div className="row">
-                    {/* ---------- Account Management Links ----------  */}
-                    <div className="col-12 col-md-6 col-xl-4 p-2">
+
+                    <div className="col p-2">
                         <div className="card">
-                            <div className="card-header text-light fw-bold text-center bg-secondary">
-                                Account Management
-                            </div>
-                            <ul className="list-group text-start list-group-flush">
-                                <Link to="/dashboard/manage/accounts/overview" className="list-group-item d-flex justify-content-between flex-fill">
-                                    <div className="p">Overview</div>
-                                    <i className="bi bi-chevron-right"></i>
-                                </Link>
-
-                                <ComponentProtector required_access_level={[0]}
-                                    component={
-                                        (
-                                            <Link to="/dashboard/manage/accounts/role" className="list-group-item d-flex justify-content-between flex-fill">
-                                                <div className="p">Account Roles</div>
-                                                <i className="bi bi-chevron-right"></i>
-                                            </Link>
-                                        )
-                                    }
-                                />
-
-                                <Link to="/dashboard/manage/accounts" className="list-group-item d-flex justify-content-between flex-fill">
-                                    <div className="p">Accounts</div>
-                                    <i className="bi bi-chevron-right"></i>
-                                </Link>
-
-                                <Link to="/dashboard/manage/accounts/history" className="list-group-item d-flex justify-content-between flex-fill">
-                                    <div className="p">History</div>
-                                    <i className="bi bi-chevron-right"></i>
-                                </Link>
-                            </ul>
-                        </div>
-                    </div>
-
-                    {/* ---------- Account Management Links ----------  */}
-                    <div className="col-12 col-md-6 col-xl-4 p-2">
-                        <div className="card">
-                            <div className="card-header text-light fw-bold text-center bg-secondary">
+                            <div className="card-header fw-bold text-center bg-body-tertiary">
                                 Manage Computer Laboratory
                             </div>
                             <ul className="list-group text-start list-group-flush">
-                                <Link to="/dashboard/manage/lab/overview" className="list-group-item d-flex justify-content-between flex-fill">
+                                <Link to="./lab/overview" className="list-group-item d-flex justify-content-between flex-fill">
                                     <div className="p">Overview</div>
                                     <i className="bi bi-chevron-right"></i>
                                 </Link>
 
-                                <Link to="/dashboard/manage/lab/" className="list-group-item d-flex justify-content-between flex-fill">
-                                    <div className="p">Computer Laboratories</div>
+                                <Link to="./lab/" className="list-group-item d-flex justify-content-between flex-fill">
+                                    <div className="p">Locations</div>
                                     <i className="bi bi-chevron-right"></i>
                                 </Link>
 
-                                <Link to="/dashboard/manage/lab/equipments" className="list-group-item d-flex justify-content-between flex-fill">
+                                <Link to="./lab/equipments" className="list-group-item d-flex justify-content-between flex-fill">
                                     <div className="p">Equipments</div>
                                     <i className="bi bi-chevron-right"></i>
                                 </Link>
 
-                                <Link to="/dashboard/manage/lab/equipments/history" className="list-group-item d-flex justify-content-between flex-fill">
-                                    <div className="p">History</div>
+                                <Link to="./lab/activities" className="list-group-item d-flex justify-content-between flex-fill">
+                                    <div className="p">Activities</div>
                                     <i className="bi bi-chevron-right"></i>
                                 </Link>
                             </ul>
                         </div>
                     </div>
 
-                    {/* ---------- Account Management Links ----------  */}
-                    <div className="col-12 col-md-6 col-xl-4 p-2">
+
+                    <div className="col p-2">
                         <div className="card">
-                            <div className="card-header text-light fw-bold text-center bg-secondary">
-                                Ticket Management (Unfinished)
+                            <div className="card-header fw-bold text-center bg-body-tertiary">
+                                Manage Tickets
                             </div>
                             <ul className="list-group text-start list-group-flush">
-                                <Link to="/dashboard/manage/tickets/overview" className="list-group-item d-flex justify-content-between flex-fill">
+                                <Link to="./lab/overview" className="list-group-item d-flex justify-content-between flex-fill">
                                     <div className="p">Overview</div>
                                     <i className="bi bi-chevron-right"></i>
                                 </Link>
 
-                                <Link to="/dashboard/manage/tickets" className="list-group-item d-flex justify-content-between flex-fill">
-                                    <div className="p">Tickets</div>
+                                <Link to="./lab/" className="list-group-item d-flex justify-content-between flex-fill">
+                                    <div className="p">Ticket Management</div>
                                     <i className="bi bi-chevron-right"></i>
                                 </Link>
 
-                                <Link to="/dashboard/manage/tickets/history" className="list-group-item d-flex justify-content-between flex-fill">
+                                <Link to="./lab/equipments" className="list-group-item d-flex justify-content-between flex-fill">
                                     <div className="p">History</div>
                                     <i className="bi bi-chevron-right"></i>
                                 </Link>
                             </ul>
                         </div>
                     </div>
-
                 </div>
             </div>
         </>

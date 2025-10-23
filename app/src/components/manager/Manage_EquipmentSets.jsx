@@ -6,12 +6,13 @@ import ItemVisualizer from "../visualizer/ItemVisualizer"
 import { useNotifications } from "../../context/NotificationContext"
 import { useErrorHandler } from "../../hooks/useErrorHandler.jsx"
 import { apiService } from "../../services/apiService"
+import ReturnButton from "../general/ReturnButton";
 
 const TARGET_ENTITY = "equipment_sets"
 const TARGET_NAME = "Equipment Set"
 const PAGINATION_ITEMS = 12
 
-export default function EquipmentSetsManagement({showReturnButton = true}) {
+export default function EquipmentSetsManagement() {
     const nav = useNavigate()
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -85,219 +86,207 @@ export default function EquipmentSetsManagement({showReturnButton = true}) {
 
 
     return (
-        <div className="container">
-            {
-                showReturnButton && (
+        <>
+            <ReturnButton to="/dashboard/manage" />
 
-                    <div className="d-flex my-3 justify-content-start align-items-center">
-                        <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
-                            <i class="bi bi-caret-left-fill"></i> Return
-                        </div>
+
+            <div className="container-fluid">
+                <div className="p-4 my-4 border rounded bg-body-tertiary shadow">
+                    <div className="d-flex align-items-center justify-content-between mb-3">
+                        <div className="h4 text-center">Manage {TARGET_NAME}</div>
+                        <button
+                            className="btn btn-primary d-flex gap-2"
+                            onClick={() => {/* TODO: Implement add equipment set */ }}
+                        >
+                            <i className="bi bi-plus-lg"></i>
+                            <div className="d-none d-md-block">Add Equipment Set</div>
+                        </button>
                     </div>
-                )
-            }
-            <div className="p-4 my-4 border rounded bg-body-tertiary shadow">
-                <div className="d-flex align-items-center justify-content-between mb-3">
-                    <div className="h4 text-center">Manage {TARGET_NAME}</div>
-                    <button 
-                        className="btn btn-primary d-flex gap-2" 
-                        onClick={() => {/* TODO: Implement add equipment set */}}
-                    >
-                        <i className="bi bi-plus-lg"></i>
-                        <div className="d-none d-md-block">Add Equipment Set</div>
-                    </button>
-                </div>
 
-                <div className="d-flex align-items-end justify-content-between gap-3 mb-3 flex-wrap">
-                    <div className="d-flex flex-fill flex-wrap justify-content-end gap-2">
+                    <div className="d-flex align-items-end justify-content-between gap-3 mb-3 flex-wrap">
+                        <div className="d-flex flex-fill flex-wrap justify-content-end gap-2">
 
-                        <div className="flex-fill">
-                            <input type="searchQuery" className="form-control" id="search_query_input" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
-                        </div>
+                            <div className="flex-fill">
+                                <input type="searchQuery" className="form-control" id="search_query_input" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
+                            </div>
 
-                        <div className="d-flex gap-2">
-                            <div className="btn btn-outline-secondary border-secondary-subtles" onClick={() => handleToggleItemVisualMode()}>
-                                {
-                                    itemVisualMode == "list" ? (
-                                        <i className="bi bi-grid"></i>
-                                    ) : (
-                                        <i className="bi bi-list-ul"></i>
-                                    )
-                                }
+                            <div className="d-flex gap-2">
+                                <div className="btn btn-outline-secondary border-secondary-subtles" onClick={() => handleToggleItemVisualMode()}>
+                                    {
+                                        itemVisualMode == "list" ? (
+                                            <i className="bi bi-grid"></i>
+                                        ) : (
+                                            <i className="bi bi-list-ul"></i>
+                                        )
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="py-4">
+                    <div className="py-4">
 
-                    {
-                        itemVisualMode == "list" ? (
-                            <div className="table-responsive">
-                                <table className="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Location</th>
-                                            <th scope="col">Set Number</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Functionality</th>
-                                            <th scope="col">Connectivity</th>
-                                            <th scope="col">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {loading ? (
+                        {
+                            itemVisualMode == "list" ? (
+                                <div className="table-responsive">
+                                    <table className="table table-striped">
+                                        <thead>
                                             <tr>
-                                                <td colSpan="6" className="text-center py-4">
-                                                    <div className="spinner-border text-primary" role="status">
-                                                        <span className="visually-hidden">Loading equipment sets...</span>
-                                                    </div>
-                                                </td>
+                                                <th scope="col">Location</th>
+                                                <th scope="col">Set Number</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Functionality</th>
+                                                <th scope="col">Connectivity</th>
+                                                <th scope="col">Actions</th>
                                             </tr>
-                                        ) : (
-                                            currentPageData && currentPageData.map((item, key) => (
-                                                <tr key={key}>
-                                                    <td>{item.location_name || 'Unknown Location'}</td>
-                                                    <td>{item.location_set_number}</td>
-                                                    <td>
-                                                        <span className={`badge bg-${
-                                                            item.status === 'active' ? 'success' : 
-                                                            item.status === 'maintenance' ? 'warning' : 'danger'
-                                                        }`}>
-                                                            {item.status}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className={`badge bg-${
-                                                            item.functionability === 'functional' ? 'success' : 'danger'
-                                                        }`}>
-                                                            {item.functionability}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className={`badge bg-${
-                                                            item.internet_connectivity === 'stable' ? 'success' : 
-                                                            item.internet_connectivity === 'unstable' ? 'warning' : 'danger'
-                                                        }`}>
-                                                            {item.internet_connectivity}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div className="d-flex gap-1">
-                                                            <button 
-                                                                className="btn btn-sm btn-outline-secondary"
-                                                                onClick={() => {/* TODO: View equipment set */}}
-                                                                title="View Details"
-                                                            >
-                                                                <i className="bi bi-eye"></i>
-                                                            </button>
-                                                            <button 
-                                                                className="btn btn-sm btn-outline-primary"
-                                                                onClick={() => {/* TODO: Edit equipment set */}}
-                                                                title="Edit"
-                                                            >
-                                                                <i className="bi bi-pencil"></i>
-                                                            </button>
+                                        </thead>
+                                        <tbody>
+                                            {loading ? (
+                                                <tr>
+                                                    <td colSpan="6" className="text-center py-4">
+                                                        <div className="spinner-border text-primary" role="status">
+                                                            <span className="visually-hidden">Loading equipment sets...</span>
                                                         </div>
                                                     </td>
                                                 </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        ) : (
-                            <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4">
-                                {loading ? (
-                                    <div className="col-12 text-center py-4">
-                                        <div className="spinner-border text-primary" role="status">
-                                            <span className="visually-hidden">Loading equipment sets...</span>
+                                            ) : (
+                                                currentPageData && currentPageData.map((item, key) => (
+                                                    <tr key={key}>
+                                                        <td>{item.location_name || 'Unknown Location'}</td>
+                                                        <td>{item.location_set_number}</td>
+                                                        <td>
+                                                            <span className={`badge bg-${item.status === 'active' ? 'success' :
+                                                                item.status === 'maintenance' ? 'warning' : 'danger'
+                                                                }`}>
+                                                                {item.status}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span className={`badge bg-${item.functionability === 'functional' ? 'success' : 'danger'
+                                                                }`}>
+                                                                {item.functionability}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span className={`badge bg-${item.internet_connectivity === 'stable' ? 'success' :
+                                                                item.internet_connectivity === 'unstable' ? 'warning' : 'danger'
+                                                                }`}>
+                                                                {item.internet_connectivity}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div className="d-flex gap-1">
+                                                                <button
+                                                                    className="btn btn-sm btn-outline-secondary"
+                                                                    onClick={() => {/* TODO: View equipment set */ }}
+                                                                    title="View Details"
+                                                                >
+                                                                    <i className="bi bi-eye"></i>
+                                                                </button>
+                                                                <button
+                                                                    className="btn btn-sm btn-outline-primary"
+                                                                    onClick={() => {/* TODO: Edit equipment set */ }}
+                                                                    title="Edit"
+                                                                >
+                                                                    <i className="bi bi-pencil"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4">
+                                    {loading ? (
+                                        <div className="col-12 text-center py-4">
+                                            <div className="spinner-border text-primary" role="status">
+                                                <span className="visually-hidden">Loading equipment sets...</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                ) : (
-                                    currentPageData && currentPageData.map((item, key) => (
-                                        <div key={key} className="col mb-3">
-                                            <div className="card h-100">
-                                                <div className="card-body">
-                                                    <h6 className="card-title">
-                                                        {item.location_name || 'Unknown Location'} - Set {item.location_set_number}
-                                                    </h6>
-                                                    <div className="mb-2">
-                                                        <small className="text-muted">Status:</small>
-                                                        <span className={`badge bg-${
-                                                            item.status === 'active' ? 'success' : 
-                                                            item.status === 'maintenance' ? 'warning' : 'danger'
-                                                        } ms-2`}>
-                                                            {item.status}
-                                                        </span>
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <small className="text-muted">Functionality:</small>
-                                                        <span className={`badge bg-${
-                                                            item.functionability === 'functional' ? 'success' : 'danger'
-                                                        } ms-2`}>
-                                                            {item.functionability}
-                                                        </span>
-                                                    </div>
-                                                    <div className="mb-3">
-                                                        <small className="text-muted">Connectivity:</small>
-                                                        <span className={`badge bg-${
-                                                            item.internet_connectivity === 'stable' ? 'success' : 
-                                                            item.internet_connectivity === 'unstable' ? 'warning' : 'danger'
-                                                        } ms-2`}>
-                                                            {item.internet_connectivity}
-                                                        </span>
-                                                    </div>
-                                                    {item.issue_description && (
-                                                        <div className="mb-3">
-                                                            <small className="text-muted">Issue:</small>
-                                                            <p className="small text-danger">{item.issue_description}</p>
+                                    ) : (
+                                        currentPageData && currentPageData.map((item, key) => (
+                                            <div key={key} className="col mb-3">
+                                                <div className="card h-100">
+                                                    <div className="card-body">
+                                                        <h6 className="card-title">
+                                                            {item.location_name || 'Unknown Location'} - Set {item.location_set_number}
+                                                        </h6>
+                                                        <div className="mb-2">
+                                                            <small className="text-muted">Status:</small>
+                                                            <span className={`badge bg-${item.status === 'active' ? 'success' :
+                                                                item.status === 'maintenance' ? 'warning' : 'danger'
+                                                                } ms-2`}>
+                                                                {item.status}
+                                                            </span>
                                                         </div>
-                                                    )}
-                                                </div>
-                                                <div className="card-footer bg-transparent">
-                                                    <div className="d-flex gap-2">
-                                                        <button 
-                                                            className="btn btn-sm btn-outline-secondary flex-fill"
-                                                            onClick={() => {/* TODO: View equipment set */}}
-                                                        >
-                                                            <i className="bi bi-eye"></i> View
-                                                        </button>
-                                                        <button 
-                                                            className="btn btn-sm btn-outline-primary flex-fill"
-                                                            onClick={() => {/* TODO: Edit equipment set */}}
-                                                        >
-                                                            <i className="bi bi-pencil"></i> Edit
-                                                        </button>
+                                                        <div className="mb-2">
+                                                            <small className="text-muted">Functionality:</small>
+                                                            <span className={`badge bg-${item.functionability === 'functional' ? 'success' : 'danger'
+                                                                } ms-2`}>
+                                                                {item.functionability}
+                                                            </span>
+                                                        </div>
+                                                        <div className="mb-3">
+                                                            <small className="text-muted">Connectivity:</small>
+                                                            <span className={`badge bg-${item.internet_connectivity === 'stable' ? 'success' :
+                                                                item.internet_connectivity === 'unstable' ? 'warning' : 'danger'
+                                                                } ms-2`}>
+                                                                {item.internet_connectivity}
+                                                            </span>
+                                                        </div>
+                                                        {item.issue_description && (
+                                                            <div className="mb-3">
+                                                                <small className="text-muted">Issue:</small>
+                                                                <p className="small text-danger">{item.issue_description}</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="card-footer bg-transparent">
+                                                        <div className="d-flex gap-2">
+                                                            <button
+                                                                className="btn btn-sm btn-outline-secondary flex-fill"
+                                                                onClick={() => {/* TODO: View equipment set */ }}
+                                                            >
+                                                                <i className="bi bi-eye"></i> View
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-sm btn-outline-primary flex-fill"
+                                                                onClick={() => {/* TODO: Edit equipment set */ }}
+                                                            >
+                                                                <i className="bi bi-pencil"></i> Edit
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        )
-                    }
+                                        ))
+                                    )}
+                                </div>
+                            )
+                        }
 
-                    {
-                        currentPageData.length == 0 ? (
-                            <div className="p text-center">No Data</div>
-                        ) : ""
-                    }
+                        {
+                            currentPageData.length == 0 ? (
+                                <div className="p text-center">No Data</div>
+                            ) : ""
+                        }
 
-                    <div className="d-flex justify-content-center mt-3">
-                        {totalPages > 1 && (
-                            <Pagination
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={setCurrentPage}
-                            />
-                        )}
+                        <div className="d-flex justify-content-center mt-3">
+                            {totalPages > 1 && (
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    onPageChange={setCurrentPage}
+                                />
+                            )}
+                        </div>
                     </div>
+
                 </div>
-
             </div>
-        </div>
-
+        </>
     )
 }

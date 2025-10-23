@@ -6,12 +6,13 @@ import { useNotifications } from "../../context/NotificationContext"
 import { useErrorHandler } from "../../hooks/useErrorHandler.jsx"
 import { FormsAdd_Accounts, FormsEdit_Accounts, FormsView_Accounts, ItemVisualizerContent_Accounts } from "../forms/Forms_Accounts"
 import { useNavigate } from "react-router-dom"
+import ReturnButton from "../general/ReturnButton";
 
 const TARGET_ENTITY = "accounts"
 const TARGET_NAME = "Account"
 const PAGINATION_ITEMS = 12
 
-export default function AccountsManagement({ showReturnButton = true }) {
+export default function AccountsManagement() {
     const nav = useNavigate()
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -81,123 +82,117 @@ export default function AccountsManagement({ showReturnButton = true }) {
 
 
     return (
-        <div className="container">
-            {
-                showReturnButton && (
 
-                    <div className="d-flex my-3 justify-content-start align-items-center">
-                        <div className="btn btn-primary" onClick={() => nav("/dashboard?tab=manage")}>
-                            <i class="bi bi-caret-left-fill"></i> Return
+        <>
+            <ReturnButton to="/dashboard/manage" />
+
+            <div className="container-fluid">
+                <div className="mb-3">
+                    <div className="d-flex justify-content-end gap-2">
+                        <input type="searchQuery" className="form-control" style={{ maxWidth: "500px" }} id="search_query_input" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
+
+                        <div className="btn btn-outline-secondary border-secondary-subtles" onClick={() => handleToggleItemVisualMode()}>
+                            {
+                                itemVisualMode == "list" ? (
+                                    <i className="bi bi-grid"></i>
+                                ) : (
+                                    <i className="bi bi-list-ul"></i>
+                                )
+                            }
                         </div>
-                    </div>
-                )
-            }
-            <div className="mb-3">
-                <div className="d-flex justify-content-end gap-2">
-                    <input type="searchQuery" className="form-control" style={{ maxWidth: "500px" }} id="search_query_input" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
 
-                    <div className="btn btn-outline-secondary border-secondary-subtles" onClick={() => handleToggleItemVisualMode()}>
+
                         {
-                            itemVisualMode == "list" ? (
-                                <i className="bi bi-grid"></i>
-                            ) : (
-                                <i className="bi bi-list-ul"></i>
-                            )
+                            <FormsAdd_Accounts refetch_data={handleFetchData} />
                         }
-                    </div>
 
+                    </div>
+                </div>
+
+
+                <div className="p-3">
 
                     {
-                        <FormsAdd_Accounts refetch_data={handleFetchData} />
+                        itemVisualMode == "list" ? (
+                            <div className="table-py-2 table-responsive rounded bg-body">
+                                <table className="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Full Name</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Role</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {(loading || API_LOADING) ? (
+                                            <tr>
+                                                <td colSpan="5" className="text-center py-4">
+                                                    <div className="spinner-border text-primary" role="status">
+                                                        <span className="visually-hidden">Loading accounts...</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            currentPageData && currentPageData.map((item, key) => (
+                                                <ItemVisualizer
+                                                    key={key}
+                                                    data={item}
+                                                    mode="list"
+                                                    card_content={<ItemVisualizerContent_Accounts data={item} mode="card" />}
+                                                    list_content={<ItemVisualizerContent_Accounts data={item} mode="list" />}
+                                                    preview_button={<FormsView_Accounts target_id={item.id} refetch_data={handleFetchData} />}
+                                                    edit_button={<FormsEdit_Accounts target_id={item.id} refetch_data={handleFetchData} />}
+                                                />
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-gap-4">
+                                {(loading || API_LOADING) ? (
+                                    <div className="col-12 text-center py-4">
+                                        <div className="spinner-border text-primary" role="status">
+                                            <span className="visually-hidden">Loading accounts...</span>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    currentPageData && currentPageData.map((item, key) => (
+                                        <ItemVisualizer
+                                            key={key}
+                                            data={item}
+                                            mode="card"
+                                            card_content={<ItemVisualizerContent_Accounts data={item} mode="card" />}
+                                            list_content={<ItemVisualizerContent_Accounts data={item} mode="list" />}
+                                            preview_button={<FormsView_Accounts target_id={item.id} refetch_data={handleFetchData} />}
+                                            edit_button={<FormsEdit_Accounts target_id={item.id} refetch_data={handleFetchData} />}
+                                        />
+                                    ))
+                                )}
+                            </div>
+                        )
                     }
 
+                    {
+                        currentPageData.length == 0 ? (
+                            <div className="p text-center">No Data</div>
+                        ) : ""
+                    }
+
+                    <div className="d-flex justify-content-center mt-3">
+                        {totalPages > 1 && (
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={setCurrentPage}
+                            />
+                        )}
+                    </div>
                 </div>
+
             </div>
-
-
-            <div className="p-3 rounded bg-body-tertiary shadow border">
-
-                {
-                    itemVisualMode == "list" ? (
-                        <div className="table-py-2 table-responsive rounded bg-body">
-                            <table className="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Full Name</th>
-                                        <th scope="col">Username</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Role</th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {(loading || API_LOADING) ? (
-                                        <tr>
-                                            <td colSpan="5" className="text-center py-4">
-                                                <div className="spinner-border text-primary" role="status">
-                                                    <span className="visually-hidden">Loading accounts...</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        currentPageData && currentPageData.map((item, key) => (
-                                            <ItemVisualizer
-                                                key={key}
-                                                data={item}
-                                                mode="list"
-                                                card_content={<ItemVisualizerContent_Accounts data={item} mode="card" />}
-                                                list_content={<ItemVisualizerContent_Accounts data={item} mode="list" />}
-                                                preview_button={<FormsView_Accounts target_id={item.id} refetch_data={handleFetchData} />}
-                                                edit_button={<FormsEdit_Accounts target_id={item.id} refetch_data={handleFetchData} />}
-                                            />
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-gap-4">
-                            {(loading || API_LOADING) ? (
-                                <div className="col-12 text-center py-4">
-                                    <div className="spinner-border text-primary" role="status">
-                                        <span className="visually-hidden">Loading accounts...</span>
-                                    </div>
-                                </div>
-                            ) : (
-                                currentPageData && currentPageData.map((item, key) => (
-                                    <ItemVisualizer
-                                        key={key}
-                                        data={item}
-                                        mode="card"
-                                        card_content={<ItemVisualizerContent_Accounts data={item} mode="card" />}
-                                        list_content={<ItemVisualizerContent_Accounts data={item} mode="list" />}
-                                        preview_button={<FormsView_Accounts target_id={item.id} refetch_data={handleFetchData} />}
-                                        edit_button={<FormsEdit_Accounts target_id={item.id} refetch_data={handleFetchData} />}
-                                    />
-                                ))
-                            )}
-                        </div>
-                    )
-                }
-
-                {
-                    currentPageData.length == 0 ? (
-                        <div className="p text-center">No Data</div>
-                    ) : ""
-                }
-
-                <div className="d-flex justify-content-center mt-3">
-                    {totalPages > 1 && (
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={setCurrentPage}
-                        />
-                    )}
-                </div>
-            </div>
-
-        </div>
-
+        </>
     )
 }

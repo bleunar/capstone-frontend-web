@@ -101,7 +101,7 @@ export const FormsDelete_AccountRoles = ({ target_id, target_name = "", refetch_
             setParentShowModal(false);
             refetch_data();
         } catch (error) {
-            notifyError(`Failed to delete ${TARGET_NAME}`, error);
+            notifyError(`${error.message}`);
         }
     };
 
@@ -169,7 +169,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             refetch_data();
             setShowModal(false);
         } catch (error) {
-            notifyError(`Failed to update ${TARGET_NAME}`, error);
+            notifyError(`${error.message}`);
         }
     };
 
@@ -181,7 +181,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             setData(BASE_OBJECT);
             notifyConfirm(`${TARGET_NAME} added successfuly`)
         } catch (error) {
-            notifyError(`Failed to Create ${TARGET_NAME}`, error)
+            notifyError(`${error.message}`)
         }
     };
 
@@ -201,7 +201,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`);
             setData(result[0]);
         } catch (error) {
-            notifyError(`Failed to fetch ${TARGET_NAME} data`, error);
+            notifyError(`${error.message}`);
         }
     };
 
@@ -211,7 +211,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             const result = await API_GET("/access_levels")
             setExtraData({ ...extraData, access_levels: result })
         } catch (error) {
-            notifyError(`Failed to fetch extra data for ${TARGET_NAME}`, error)
+            notifyError(`${error.message}`)
         }
     }
 
@@ -287,7 +287,7 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`)
             setData(result[0])
         } catch (error) {
-            notifyError(`Failed to fetch ${TARGET_NAME}`, error)
+            notifyError(`${error.message}`)
         }
     };
 
@@ -298,7 +298,7 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
             const result = await API_GET(`/access_levels?id=${data.access_level}`)
             setExtraData({ ...extraData, access_level: result })
         } catch (error) {
-            notifyError(`Failed to fetch extra data for ${TARGET_NAME}`, error)
+            notifyError(`${error.message}`)
         }
     }
 
@@ -325,7 +325,7 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
 
                     <div className="row row-cols-2 p-2">
                         <div className="col text-muted border-end">Access Level</div>
-                        <div className="col">{extraData && extraData.access_level ? `${extraData.access_level.name} [${extraData.access_level.id}]` : "..."}</div>
+                        <div className="col">{extraData && extraData.access_level ? `Level ${extraData.access_level.id} - ${extraData.access_level.name}` : "..."}</div>
                     </div>
                 </div>
 
@@ -356,8 +356,7 @@ export const ItemVisualizerContent_AccountRoles = ({ data, mode = "list" }) => {
             const result = await API_GET(`/access_levels?id=${data.access_level}`)
             setExtraData({ ...extraData, access_level: result })
         } catch (error) {
-            console.error(error)
-            notifyError(`Failed to fetch extra data for ${TARGET_NAME}`, error)
+            notifyError(`${error.message}`)
         }
     }
 

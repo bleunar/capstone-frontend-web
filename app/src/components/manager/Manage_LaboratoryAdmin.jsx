@@ -120,6 +120,7 @@ function LabGrid({ labs, selectLab }) {
   };
 
   return (
+    <>
     <div className="d-flex flex-wrap gap-4 justify-content-center">
       {labs
         .slice()
@@ -438,6 +439,7 @@ function LabGrid({ labs, selectLab }) {
         </div>
       )}
     </div>
+    </>
   );
 }
 
@@ -1368,5 +1370,6 @@ export default function ManageLaboratoryDefault() {
         <AddLabModal addLab={addLab} onClose={() => setShowAddLab(false)} />
       )}
     </div>
+
   );
 }
