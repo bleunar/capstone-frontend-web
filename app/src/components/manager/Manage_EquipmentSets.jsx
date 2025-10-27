@@ -284,7 +284,6 @@ export default function EquipmentSetsManagement() {
                             )}
                         </div>
                     </div>
-
                 </div>
             </div>
         </>

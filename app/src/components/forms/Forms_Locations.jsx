@@ -182,6 +182,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             setData(BASE_OBJECT);
             notifyConfirm(`${TARGET_NAME} added successfuly`)
         } catch (error) {
+            console.error(error)
             notifyError(`Failed to Create ${TARGET_NAME}`, error)
         }
     };
@@ -218,7 +219,6 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
 
     return (
         <>
-
             <div className="h4 text-center mb-4">{submitMode == "add" ? "New" : "Update"} {TARGET_NAME}</div>
 
             <form onSubmit={handleSubmit} noValidate>
