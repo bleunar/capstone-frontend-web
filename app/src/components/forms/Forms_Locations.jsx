@@ -27,7 +27,7 @@ export const FormsAdd_Locations = ({ mode = 'button', refetch_data }) => {
         <div>
             <button type="button" className="btn btn-primary d-flex gap-2" onClick={() => setShowModal(true)}>
                 <i className="bi bi-plus-lg">
-                </i><div className="d-none d-md-block">Add</div>
+                </i><div className="d-none d-md-block">New Laboratory</div>
             </button>
             {showModal && (
                 <FormModal onClose={() => setShowModal(false)}>

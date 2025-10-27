@@ -160,7 +160,7 @@ function AddEquipmentsModal({locations}) {
                 onClick={() => setShowModal(true)}
             >
                 <i className="bi bi-plus"></i>
-                <div className="d-none d-md-block">Add</div>
+                <div className="d-none d-md-block">Add Equipment</div>
             </button>
 
             {showModal && (
