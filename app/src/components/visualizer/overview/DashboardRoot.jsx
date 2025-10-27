@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import VisualCounter from "../VisualCounter.jsx";
 import { BarVisualizer, PieVisualizer, LineVisualizer } from "../Visualizers.jsx";
 import { useDashboardAnalytics } from "../../../hooks/useDashboardAnalytics.jsx";
-import GeneralSystemInfromation from "./GeneralSystemInformation.jsx";
 
 export default function DashboardHomeRoot() {
     const { loading, dashboardData } = useDashboardAnalytics();
@@ -132,10 +131,9 @@ export default function DashboardHomeRoot() {
                 ))}
             </div>
 
-            <GeneralSystemInfromation />
-
             {/* Analytics Charts */}
-            <div className="mb-4 row row-cols-1 row-cols-lg-3">
+           <div className="container-fluid">
+             <div className="mb-4 row row-cols-1 row-cols-lg-3">
                 <div className="col p-2">
                     <LineVisualizer
                         title="Account Activity"
@@ -153,6 +151,13 @@ export default function DashboardHomeRoot() {
                         title="Equipment Status"
                         data={chartData.pieData || fallbackPieData}
                     />
+                </div>
+            </div>
+           </div>
+
+            <div className="container-fluid">
+                <div className="row row-cols-3">
+                    <div className="col"></div>
                 </div>
             </div>
 

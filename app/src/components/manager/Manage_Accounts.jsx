@@ -68,7 +68,7 @@ export default function AccountsManagement() {
             setData(result || [])
         } catch (error) {
             handleError(error)
-            notifyError(`Failed to fetch ${TARGET_NAME} data`)
+            console.error(`Failed to fetch ${TARGET_NAME} data`)
         } finally {
             setLoading(false)
         }

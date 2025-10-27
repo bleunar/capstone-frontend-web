@@ -7,7 +7,7 @@ import { useEmailService } from "../hooks/useEmail";
 
 const ACTION_LABELS = {
     system_unit_name: "System Unit Name",
-    display_name: "Display Name",
+    monitor_name: "Display Name",
     keyboard_name: "Keyboard Name",
     mouse_name: "Mouse Name",
     avr_name: "AVR Name",
@@ -139,7 +139,6 @@ function LocationActivities({ lab_data, selectedActivities, onSelectOne, onSelec
             const result = await API_GET("/equipment_set_activity/today/" + id)
             setLocationActivities(result)
             onActivitiesFetched(id, result)
-            console.log(result)
         } catch (error) {
             notifyError(error)
         }
@@ -316,8 +315,6 @@ function EmailStagingFormModal({ selectedActivities, activitiesByLocation, refre
                 cleared_activities: clearedIds,
             };
 
-            console.log("Sending grouped activities payload:", payload);
-
             const resultClear = await API_POST("/equipment_set_activity/clear", {cleared_activities: clearedIds});
             notifyConfirm("Activity cleared successfully!");
 
@@ -473,19 +470,6 @@ function RadioToggleGroup({ selected, onChange, disabled }) {
                 type="radio"
                 className="btn-check"
                 name="btnradio"
-                id="select_all"
-                autoComplete="off"
-                checked={selected === "select_all"}
-                onChange={() => onChange("select_all")}
-            />
-            <label className="btn btn-outline-primary" htmlFor="select_all">
-                All
-            </label>
-
-            <input
-                type="radio"
-                className="btn-check"
-                name="btnradio"
                 id="selected_only"
                 autoComplete="off"
                 checked={selected === "selected_only"}
@@ -498,6 +482,19 @@ function RadioToggleGroup({ selected, onChange, disabled }) {
                 htmlFor="selected_only"
             >
                 Selected Only
+            </label>
+
+            <input
+                type="radio"
+                className="btn-check"
+                name="btnradio"
+                id="select_all"
+                autoComplete="off"
+                checked={selected === "select_all"}
+                onChange={() => onChange("select_all")}
+            />
+            <label className="btn btn-outline-primary" htmlFor="select_all">
+                All
             </label>
         </div>
     );

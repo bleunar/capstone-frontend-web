@@ -102,7 +102,7 @@ export const FormsDelete_Locations = ({ target_id, target_name = "", refetch_dat
             setParentShowModal(false);
             refetch_data();
         } catch (error) {
-            notifyError(`Failed to delete ${TARGET_NAME}`, error);
+            notifyError(error);
         }
     };
 
@@ -149,7 +149,7 @@ export const FormsDelete_Locations = ({ target_id, target_name = "", refetch_dat
 
 // INPUT Field
 const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModal, refetch_data }) => {
-    const { notifyError, notifyConfirm } = useNotifications();
+    const { notifyError, notifyInform, notifyConfirm } = useNotifications();
     const { API_PUT, API_GET, API_POST } = useSystemAPI();
     const [data, setData] = useState(BASE_OBJECT);
     const [extraData, setExtraData] = useState({})
@@ -170,7 +170,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             refetch_data();
             setShowModal(false);
         } catch (error) {
-            notifyError(error);
+            notifyInform(error);
         }
     };
 
@@ -182,8 +182,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             setData(BASE_OBJECT);
             notifyConfirm(`${TARGET_NAME} added successfuly`)
         } catch (error) {
-            console.error(error)
-            notifyError(`Failed to Create ${TARGET_NAME}`, error)
+            notifyInform(error)
         }
     };
 
@@ -203,7 +202,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`);
             setData(result[0]);
         } catch (error) {
-            notifyError(`Failed to fetch ${TARGET_NAME} data`, error);
+            console.error(`Failed to fetch ${TARGET_NAME} data`, error);
         }
     };
 
@@ -267,7 +266,7 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`)
             setData(result[0])
         } catch (error) {
-            notifyError(`Failed to fetch ${TARGET_NAME}`, error)
+            console.error(`Failed to fetch ${TARGET_NAME}`, error)
         }
     };
 

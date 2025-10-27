@@ -5,6 +5,9 @@ import copy from "copy-to-clipboard"
 import { useNotifications } from "../../context/NotificationContext"
 import { MdCable } from "react-icons/md";
 import { LuCable } from "react-icons/lu";
+import { MdNetworkCheck } from "react-icons/md";
+import { MdSignalCellularAlt } from "react-icons/md";
+import { PiComputerTowerFill } from "react-icons/pi";
 
 const BASE_OBJECT = {
     id: "",
@@ -40,7 +43,7 @@ const BASE_OBJECT_COMPONENTS = {
 }
 
 export default function Item_EquipmentSet({ target_id, display_data, refresh_parent }) {
-    const { API_GET, API_PUT } = useSystemAPI()
+    const { API_GET, API_PUT, API_DELETE } = useSystemAPI()
     const { notifyInform, notifyConfirm, notifyError } = useNotifications()
 
     const [showModal, toggleShowModal] = useState(false)
@@ -54,18 +57,18 @@ export default function Item_EquipmentSet({ target_id, display_data, refresh_par
 
 
     // handle close modal
-    function HandleCloseModal () {
+    function HandleCloseModal() {
         toggleShowModal(false)
     }
 
 
     // handles input changes on input fields
-    function HandleInputChangeEquipments (e) {
+    function HandleInputChangeEquipments(e) {
         const { name, value, type, checked } = e.target;
         setEquipment(prevData => ({ ...prevData, [name]: type === 'checkbox' ? checked : value }));
     };
 
-    function HandleInputChangeEquipmentComponents (e) {
+    function HandleInputChangeEquipmentComponents(e) {
         const { name, value, type, checked } = e.target;
         setEquipmentComponents(prevData => ({ ...prevData, [name]: type === 'checkbox' ? checked : value }));
     };
@@ -86,12 +89,15 @@ export default function Item_EquipmentSet({ target_id, display_data, refresh_par
             setIssueIcons(ISSUE_ICONS);
             setAllIcons(ALL_ICONS);
 
+            CheckBGState({ ...equipment, ...equipmentComponents });
+
             notifyInform("Equipment and components updated successfully!");
             toggleShowModal(false);
         } catch (error) {
             notifyError(error);
         }
     }
+
 
 
     async function UpdateEquipment() {
@@ -142,7 +148,7 @@ export default function Item_EquipmentSet({ target_id, display_data, refresh_par
 
 
     useEffect(() => {
-        if(showModal) {
+        if (showModal) {
             FetchData();
         }
     }, [showModal])
@@ -162,24 +168,106 @@ export default function Item_EquipmentSet({ target_id, display_data, refresh_par
             console.error(error);
         }
     }
-    
+
+
+
+    // derive bg color for equipment set
+    const [bgClass, setBgClass] = useState("bg-primary");
+
+    function CheckBGState(dataOverride = null) {
+        const data = dataOverride || display_data;
+        if (!data) return;
+
+        const {
+            issue,
+            requires_avr,
+            requires_headset,
+            system_unit_serial_number,
+            monitor_serial_number,
+            keyboard_serial_number,
+            mouse_serial_number,
+            avr_serial_number,
+            headset_serial_number
+        } = data;
+
+        // Collect all applicable serial numbers
+        const serials = [
+            system_unit_serial_number,
+            monitor_serial_number,
+            keyboard_serial_number,
+            mouse_serial_number,
+        ];
+
+        if (requires_avr === "true") serials.push(avr_serial_number);
+        if (requires_headset === "true") serials.push(headset_serial_number);
+
+        const total = serials.length;
+        const missing = serials.filter(s => !s || s.trim() === "").length;
+
+        let newBg = "bg-primary";
+
+        if (issue && issue.trim() !== "") {
+            newBg = "bg-danger";
+        } else if (missing > 0 && missing < total) {
+            newBg = "bg-info";
+        } else if (missing === total) {
+            newBg = "bg-danger";
+        } else {
+            newBg = "bg-secondary";
+        }
+
+        setBgClass(newBg);
+    }
+
+    useEffect(() => {
+        CheckBGState(display_data);
+    }, [display_data]);
+
+
+
+    async function HandleDelete(e) {
+        e.stopPropagation();
+
+        toggleShowModal(false)
+        try {
+            if(confirm("Are you sure you want to delete this?")) {
+                await API_DELETE("/equipment_sets/" + target_id)
+                notifyConfirm("Deleted Equipment")
+                refresh_parent()
+            }
+        } catch (error) {
+            alert(error)
+        }
+    }
+
+
 
     return (
         <>
             <div className="col p-1">
-                <div className="w-100 bg-primary position-relative cursor-pointer hover-show-source hover-hide-source" style={{ height: "150px" }} onClick={() => toggleShowModal(!showModal)}>
+                <div
+                    className={`w-100 ${bgClass} bg-opacity-75 position-relative cursor-pointer hover-show-source hover-hide-source rounded`}
+                    style={{ height: "150px" }}
+                    onClick={() => toggleShowModal(!showModal)}
+                >
                     <div className="p-2 d-flex position-absolute top-0 start-0">
-                        <div className="h4 fw-bold">{display_data?.equipment_set_name}</div>
+                        <div className="h4 fw-bold text-uppercase">{display_data?.equipment_set_name}</div>
                     </div>
 
-                    <div className=" d-flex gap-1 justify-content-end rounded-pill p-2 position-absolute w-100 bottom-0 hover-hide-client">
+                    <div className="p-2 d-flex position-absolute top-0 end-0 hover-show-client" onClick={HandleDelete}>
+                        <div className="btn btn-outline-primary text-danger btn-sm border-0">
+                            <i class="bi bi-trash3-fill"></i>
+                        </div>
+                    </div>
+
+                    <div className="d-flex gap-1 justify-content-end rounded-pill p-2 position-absolute w-100 bottom-0 hover-hide-client flex-wrap">
                         {
                             issueIcons
                         }
                     </div>
 
-                    <div className="p-2 d-flex gap-1 justify-content-end position-absolute pe-2 w-100 bottom-0 hover-show-client">
-                        <div className="d-flex gap-1 justify-content-between">
+                    <div className="p-2 d-flex justify-content-end position-absolute pe-2 w-100 bottom-0 hover-show-client">
+                        <div className="d-flex gap-1 justify-content-end flex-wrap-reverse">
                             {
                                 allIcons
                             }
@@ -243,145 +331,143 @@ export default function Item_EquipmentSet({ target_id, display_data, refresh_par
                                         refShowSerialNumber={refShowSerialNumber}
                                         refKey={4}
                                     />
-                                    ) : ""
-                                }
+                                ) : ""
+                            }
 
-                                {
-                                    equipment?.requires_headset == "true" ? (
-                                        <EquipmentComponentItem
-                                            HandleInputChangeEquipmentComponents={HandleInputChangeEquipmentComponents}
-                                            item_name={equipmentComponents?.headset_name}
-                                            item_serial_number={equipmentComponents?.headset_serial_number}
-                                            item_type="headset"
-                                            refShowSerialNumber={refShowSerialNumber}
-                                            refKey={5}
-                                        />
-                                    ) : ''
-                                }
+                            {
+                                equipment?.requires_headset == "true" ? (
+                                    <EquipmentComponentItem
+                                        HandleInputChangeEquipmentComponents={HandleInputChangeEquipmentComponents}
+                                        item_name={equipmentComponents?.headset_name}
+                                        item_serial_number={equipmentComponents?.headset_serial_number}
+                                        item_type="headset"
+                                        refShowSerialNumber={refShowSerialNumber}
+                                        refKey={5}
+                                    />
+                                ) : ''
+                            }
 
-                                <div className="col-6 p-1 ps-0">
-                                    <div className="rounded p-2 px-3 border bg-body-tertiary">
-                                        <div className="d-flex align-items-center justify-content-center">
-                                            <div className="form-check form-switch d-flex gap-2 align-items-center">
-                                                <input className="form-check-input" type="checkbox" id="plugged_power_cable" name="plugged_power_cable" value={equipment?.plugged_power_cable} checked={equipment?.plugged_power_cable == "true"} onChange={(e) => setEquipment({ ...equipment, plugged_power_cable: equipment?.plugged_power_cable == "true" ? "false" : "true" })} />
-                                                <label className="form-check-label" htmlFor="plugged_power_cable">Power Cable</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="col-6 p-1 pe-0">
-                                    <div className="rounded p-2 px-3 border bg-body-tertiary">
-                                        <div className="d-flex align-items-center justify-content-center">
-                                            <div className="form-check form-switch d-flex gap-2 align-items-center">
-                                                <input className="form-check-input" type="checkbox" id="plugged_display_cable" name="plugged_display_cable" value={equipment?.plugged_display_cable} checked={equipment?.plugged_display_cable == "true"} onChange={(e) => setEquipment({ ...equipment, plugged_display_cable: equipment?.plugged_display_cable == "true" ? "false" : "true" })} />
-                                                <label className="form-check-label" htmlFor="plugged_display_cable">Display Cable</label>
-                                            </div>
+                            <div className="col-6 p-1 ps-0">
+                                <div className="rounded p-2 px-3 border bg-body-tertiary">
+                                    <div className="d-flex align-items-center justify-content-center">
+                                        <div className="form-check form-switch d-flex gap-2 align-items-center">
+                                            <input className="form-check-input" type="checkbox" id="plugged_power_cable" name="plugged_power_cable" value={equipment?.plugged_power_cable} checked={equipment?.plugged_power_cable == "true"} onChange={(e) => setEquipment({ ...equipment, plugged_power_cable: equipment?.plugged_power_cable == "true" ? "false" : "true" })} />
+                                            <label className="form-check-label" htmlFor="plugged_power_cable">Power Cable</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                           
-                        </div>
-
-                        
-
-
-
-                        <div className="mb-4">
-                            <div className="d-flex align-items-center justify-content-start gap-1">
-                                <button className="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
-                                    Status and Configurations
-                                </button>
-
-                                <button className={`btn btn-sm btn-secondary ${clickedShowAllSerial ? "visually-hidden" : ""}`} onClick={() => handleShowAllSerial()} disabled={clickedShowAllSerial}>Show Serial Numbers</button>
-                            </div>
-                        </div>
-
-                        <div className="collapse" id="collapseExample2">
-                            <div>
-                                <div className="p-3 bg-body-tertiary rounded mb-4">
-                                    <div className="container-fluid mb-5">
-                                        <div className="row row-cols-2 row-gap-4">
-                                            <div className="col">
-                                                <label for="equipment_name" name="name" class="form-label">Equipment Set Name</label>
-                                                <input type="email" class="form-control" id="equipment_name" name="name" placeholder="Equipment Name" value={equipment?.name} onChange={HandleInputChangeEquipments} />
-                                            </div>
-
-                                            <div className="col">
-                                                <label for="equipment_name" name="name" class="form-label">Location</label>
-                                                <input type="email" class="form-control" id="equipment_name" name="name" disabled value={equipment?.location_name} />
-                                            </div>
-
-                                            <div className="col">
-                                                <label className="form-check-label mb-1" htmlFor="requires_avr">AVR Unit</label>
-                                                <select className="form-select" aria-label="Default select example" id="requires_avr" name="requires_avr" value={equipment?.requires_avr} onChange={HandleInputChangeEquipments}>
-                                                    <option value="true">Required</option>
-                                                    <option value="false">Not Required</option>
-                                                </select>
-                                            </div>
-
-                                            <div className="col">
-                                                <label className="form-check-label mb-1" htmlFor="requires_headset">Includes Headset</label>
-                                                <select className="form-select" aria-label="Default select example" id="requires_headset" name="requires_headset" value={equipment?.requires_headset} onChange={HandleInputChangeEquipments}>
-                                                    <option value="true">Yes</option>
-                                                    <option value="false">No</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="container-fluid mb-3">
-                                        <div className="row row-cols-3 row-gap-4">
-                                            <div className="col">
-                                                <label className="form-check-label mb-1" htmlFor="status">Status</label>
-                                                <select className="form-select" aria-label="Default select example" id="status" name="status" value={equipment?.status} onChange={HandleInputChangeEquipments}>
-                                                    <option value="active">Active</option>
-                                                    <option value="suspended">Maintenance</option>
-                                                    <option value="maintenance">Disabled</option>
-                                                </select>
-                                            </div>
-
-                                            <div className="col">
-                                                <label className="form-check-label mb-1" htmlFor="connectivity">Internet</label>
-                                                <select className="form-select" aria-label="Default select example" id="connectivity" name="connectivity" value={equipment?.connectivity} onChange={HandleInputChangeEquipments}>
-                                                    <option value="stable">Stable</option>
-                                                    <option value="unstable">Unstable</option>
-                                                    <option value="untested">Untested</option>
-                                                </select>
-                                            </div>
-
-                                            <div className="col">
-                                                <label className="form-check-label mb-1" htmlFor="performance">Performance</label>
-                                                <select className="form-select" aria-label="Default select example" id="performance" name="performance" value={equipment?.performance} onChange={HandleInputChangeEquipments}>
-                                                    <option value="stable">Stable</option>
-                                                    <option value="unstable">Unstable</option>
-                                                    <option value="untested">Untested</option>
-                                                </select>
-                                            </div>
-
-                                            <div className="col-12">
-                                                <div className="d-flex justify-content-between mb-1">
-                                                    <label htmlFor="exampleFormControlTextarea1" className="form-label">Issues</label>
-                                                    {
-                                                        equipment?.issue && (
-                                                            <a className="text-muted cursor-pointer border-0" onClick={() => setEquipment({ ...equipment, issue: '' })}>Clear Issues</a>
-                                                        )
-                                                    }
-                                                </div>
-                                                <textarea className="form-control" id="issue" name="issue" value={equipment?.issue} onChange={HandleInputChangeEquipments} rows="3"></textarea>
-                                            </div>
+                            <div className="col-6 p-1 pe-0">
+                                <div className="rounded p-2 px-3 border bg-body-tertiary">
+                                    <div className="d-flex align-items-center justify-content-center">
+                                        <div className="form-check form-switch d-flex gap-2 align-items-center">
+                                            <input className="form-check-input" type="checkbox" id="plugged_display_cable" name="plugged_display_cable" value={equipment?.plugged_display_cable} checked={equipment?.plugged_display_cable == "true"} onChange={(e) => setEquipment({ ...equipment, plugged_display_cable: equipment?.plugged_display_cable == "true" ? "false" : "true" })} />
+                                            <label className="form-check-label" htmlFor="plugged_display_cable">Display Cable</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="d-flex justify-content-center align-items-center">
-                            <div className="btn btn-primary fw-bold" onClick={HandleUpdate}>Update</div>
+
+
+
+
+                    <div className="mb-4">
+                        <div className="d-flex align-items-center justify-content-start gap-1">
+                            <button className="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
+                                Status and Configurations
+                            </button>
+
+                            <button className={`btn btn-sm btn-secondary ${clickedShowAllSerial ? "visually-hidden" : ""}`} onClick={() => handleShowAllSerial()} disabled={clickedShowAllSerial}>Show Serial Numbers</button>
                         </div>
-                    </FormModal>
+                    </div>
+
+                    <div className="collapse" id="collapseExample2">
+                        <div>
+                            <div className="p-3 bg-body-tertiary rounded mb-4">
+                                <div className="container-fluid mb-5">
+                                    <div className="row row-cols-2 row-gap-4">
+                                        <div className="col">
+                                            <label for="equipment_name" name="name" class="form-label">Equipment Set Name</label>
+                                            <input type="email" class="form-control" id="equipment_name" name="name" placeholder="Equipment Name" value={equipment?.name} onChange={HandleInputChangeEquipments} />
+                                        </div>
+
+                                        <div className="col">
+                                            <label for="equipment_name" name="name" class="form-label">Location</label>
+                                            <input type="email" class="form-control" id="equipment_name" name="name" disabled value={equipment?.location_name} />
+                                        </div>
+
+                                        <div className="col">
+                                            <label className="form-check-label mb-1" htmlFor="requires_avr">AVR Unit</label>
+                                            <select className="form-select" aria-label="Default select example" id="requires_avr" name="requires_avr" value={equipment?.requires_avr} onChange={HandleInputChangeEquipments}>
+                                                <option value="true">Required</option>
+                                                <option value="false">Not Required</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="col">
+                                            <label className="form-check-label mb-1" htmlFor="requires_headset">Includes Headset</label>
+                                            <select className="form-select" aria-label="Default select example" id="requires_headset" name="requires_headset" value={equipment?.requires_headset} onChange={HandleInputChangeEquipments}>
+                                                <option value="true">Yes</option>
+                                                <option value="false">No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="container-fluid mb-3">
+                                    <div className="row row-cols-3 row-gap-4">
+                                        <div className="col">
+                                            <label className="form-check-label mb-1" htmlFor="status">Status</label>
+                                            <select className="form-select" aria-label="Default select example" id="status" name="status" value={equipment?.status} onChange={HandleInputChangeEquipments}>
+                                                <option value="active">Active</option>
+                                                <option value="suspended">Maintenance</option>
+                                                <option value="maintenance">Disabled</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="col">
+                                            <label className="form-check-label mb-1" htmlFor="connectivity">Internet</label>
+                                            <select className="form-select" aria-label="Default select example" id="connectivity" name="connectivity" value={equipment?.connectivity} onChange={HandleInputChangeEquipments}>
+                                                <option value="stable">Stable</option>
+                                                <option value="unstable">Unstable</option>
+                                                <option value="untested">Untested</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="col">
+                                            <label className="form-check-label mb-1" htmlFor="performance">Performance</label>
+                                            <select className="form-select" aria-label="Default select example" id="performance" name="performance" value={equipment?.performance} onChange={HandleInputChangeEquipments}>
+                                                <option value="stable">Stable</option>
+                                                <option value="unstable">Unstable</option>
+                                                <option value="untested">Untested</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="col-12">
+                                            <div className="d-flex justify-content-between mb-1">
+                                                <label htmlFor="exampleFormControlTextarea1" className="form-label">Issues</label>
+                                                {
+                                                    equipment?.issue && (
+                                                        <a className="text-muted cursor-pointer border-0" onClick={() => setEquipment({ ...equipment, issue: '' })}>Clear Issues</a>
+                                                    )
+                                                }
+                                            </div>
+                                            <textarea className="form-control" id="issue" name="issue" value={equipment?.issue} onChange={HandleInputChangeEquipments} rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="d-flex justify-content-center align-items-center">
+                        <div className="btn btn-primary fw-bold" onClick={HandleUpdate}>Update</div>
+                    </div>
+                </FormModal>
             }
         </>
     )
@@ -430,9 +516,9 @@ function EquipmentComponentItem({ item_name, item_serial_number, item_type, Hand
 
                                 if (isNamePresent && isSerialPresent) {
                                     badgeColor = "success";
-                                    badgeText = "Active";
+                                    badgeText = "Complete";
                                 } else if (isNamePresent || isSerialPresent) {
-                                    badgeColor = "secondary";
+                                    badgeColor = "info";
                                     badgeText = "Incomplete";
                                 }
 
@@ -485,12 +571,12 @@ const checkEquipmentSetIssues = (data) => {
     allIcons.push(
         <i
             key="system"
-            className={`bi fs-5 opacity-75 bi-pc ${systemUnitOk ? "" : "text-danger"}`}
+            className={`bi bi-pc p-1 fs-6 opacity-75 rounded ${!systemUnitOk ? "bg-danger-subtle" : ""}`} data-toggle="tooltip" data-placement="top" title="System Unit"
         ></i>
     );
     if (!systemUnitOk) {
         issueIcons.push(
-            <i key="system-issue" className="bi fs-5 opacity-75 bi-pc"></i>
+            <i key="system-issue" className="bi p-1 fs-6 opacity-75 bi-pc"></i>
         );
     }
 
@@ -503,12 +589,12 @@ const checkEquipmentSetIssues = (data) => {
     allIcons.push(
         <i
             key="monitor"
-            className={`bi fs-5 opacity-75 bi-display ${monitorOk ? "" : "text-danger"}`}
+            className={`bi bi-display p-1 fs-6 opacity-75 rounded ${!monitorOk ? "bg-danger-subtle" : ""}`} data-toggle="tooltip" data-placement="top" title="Monitor"
         ></i>
     );
     if (!monitorOk) {
         issueIcons.push(
-            <i key="monitor-issue" className="bi fs-5 opacity-75 bi-display"></i>
+            <i key="monitor-issue" className="bi p-1 fs-6 opacity-75 bi-display"></i>
         );
     }
 
@@ -521,12 +607,12 @@ const checkEquipmentSetIssues = (data) => {
     allIcons.push(
         <i
             key="keyboard"
-            className={`bi fs-5 opacity-75 bi-keyboard ${keyboardOK ? "" : "text-danger"}`}
+            className={`bi bi-keyboard p-1 fs-6 opacity-75 rounded ${!keyboardOK ? "bg-danger-subtle" : ""}`} data-toggle="tooltip" data-placement="top" title="Keyboard"
         ></i>
     );
     if (!keyboardOK) {
         issueIcons.push(
-            <i key="keyboard-issue" className="bi fs-5 opacity-75 bi-keyboard"></i>
+            <i key="keyboard-issue" className="bi p-1 fs-6 opacity-75 bi-keyboard"></i>
         );
     }
 
@@ -539,12 +625,12 @@ const checkEquipmentSetIssues = (data) => {
     allIcons.push(
         <i
             key="mouse"
-            className={`bi fs-5 opacity-75 bi-mouse ${mouseOK ? "" : "text-danger"}`}
+            className={`bi bi-mouse p-1 fs-6 opacity-75 rounded ${!mouseOK ? "bg-danger-subtle" : ""}`} data-toggle="tooltip" data-placement="top" title="Mouse"
         ></i>
     );
     if (!mouseOK) {
         issueIcons.push(
-            <i key="mouse-issue" className="bi fs-5 opacity-75 bi-mouse"></i>
+            <i key="mouse-issue" className="bi p-1 fs-6 opacity-75 bi-mouse"></i>
         );
     }
 
@@ -553,13 +639,13 @@ const checkEquipmentSetIssues = (data) => {
     const powerOk = data.plugged_power_cable === "true";
 
     allIcons.push(
-        <i key="power" className={`fs-5 opacity-75 ${powerOk ? "" : "text-danger"}`}>
+        <i key="power" className={`p-1 fs-6 opacity-75 rounded ${!powerOk ? "bg-danger-subtle" : ""}`} data-toggle="tooltip" data-placement="top" title="Power Cable">
             <LuCable />
         </i>
     );
     if (!powerOk) {
         issueIcons.push(
-            <i key="power-issue" className="fs-5 opacity-75">
+            <i key="power-issue" className="p-1 fs-6 opacity-75">
                 <LuCable />
             </i>
         );
@@ -569,17 +655,73 @@ const checkEquipmentSetIssues = (data) => {
     const displayOk = data.plugged_display_cable === "true";
 
     allIcons.push(
-        <i key="display" className={`fs-5 opacity-75 ${displayOk ? "" : "text-danger"}`}>
+        <i key="display" className={`p-1 fs-6 opacity-75 rounded ${!displayOk ? "bg-danger-subtle" : ""}`} data-toggle="tooltip" data-placement="top" title="Display Cable">
             <MdCable />
         </i>
     );
     if (!displayOk) {
         issueIcons.push(
-            <i key="display-issue" className="fs-5 opacity-75">
+            <i key="display-issue" className="p-1 fs-6 opacity-75">
                 <MdCable />
             </i>
         );
     }
+
+    // Performance
+    const performanceOk = data.performance === "stable" ;
+
+    allIcons.push(
+        <i key="performance" className={`p-1 fs-6 opacity-75 rounded ${!performanceOk ? "bg-danger-subtle" : ""}`} data-toggle="tooltip" data-placement="top" title="Equipment Performance">
+            <MdNetworkCheck />
+        </i>
+    );
+    if (!performanceOk) {
+        issueIcons.push(
+            <i key="performance" className="p-1 fs-6 opacity-75">
+                <MdNetworkCheck />
+            </i>
+        );
+    }
+
+
+    // Performance
+    const connectivityOk = data.connectivity === "stable" ;
+
+    allIcons.push(
+        <i key="connectivity" className={`p-1 fs-6 opacity-75 rounded ${!connectivityOk ? "bg-danger-subtle" : ""}`} data-toggle="tooltip" data-placement="top" title="Internet Connectivity">
+            <MdSignalCellularAlt />
+        </i>
+    );
+    if (!connectivityOk) {
+        issueIcons.push(
+            <i key="connectivity" className="p-1 fs-6 opacity-75">
+                <MdSignalCellularAlt />
+            </i>
+        );
+    }
+
+
+    // Performance
+
+    console.log(data?.issue)
+    const hasIssue = data.issue !== null && data.issue !== '';
+
+    allIcons.push(
+        <i
+            key="issue"
+            className={`bi bi-chat-square-text-fill p-1 fs-6 opacity-75 rounded ${hasIssue ? "bg-danger-subtle" : ""}`}
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Other Issues"
+        ></i>
+    );
+
+    if (hasIssue) {
+        issueIcons.push(
+            <i key="issue" className="bi bi-chat-square-text-fill p-1 fs-6 opacity-75"></i>
+        );
+    }
+<i class="bi bi-chat-square-text-fill"></i>
 
     return {
         ISSUE_ICONS: issueIcons,

@@ -9,11 +9,9 @@ export function useEmailService() {
 
   // FUNCTION TO COMMUNICATE WITH EMAIL SERVICE
   function EMAIL_SEND(payload) {
-    console.log(payload)
     setApiLoading(true);
     try {
       const ret = axiosClient.post(TARGET_EMAIL + "/send/activity", payload)
-      console.log(ret)
     } catch (error) {
       let msg = error?.response?.data?.msg || error?.response?.data?.error || error?.message || "unknown error when fetching data";
       throw new Error(msg);

@@ -1272,7 +1272,6 @@ function LabDetail({ lab, computers, back, addComputer }) {
                   })
                   .then((res) => res.json())
                   .then((data) => {
-                    console.log("Saved:", data);
                     setSelectedPC(null);
                     setSaveMsg("Status updated successfully!");
                     setTimeout(() => setSaveMsg(""), 4000);
@@ -1316,7 +1315,6 @@ export default function ManageLaboratoryDefault() {
     fetch("http://localhost:5000/check_session")
       .then(res => res.json())
       .then(data => {
-        console.log("Session check response:", data);
         if (!data.logged_in) {
           navigate("/");
         }

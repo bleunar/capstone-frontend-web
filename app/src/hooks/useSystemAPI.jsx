@@ -18,7 +18,7 @@ export const useSystemAPI = () => {
     setApiLoading(true);
     try {
       const result = await axiosClient.get(`${TARGET_SYSTEM}${url}`, config);
-      return result?.data?.data;
+      return result?.data?.data ? result?.data?.data : result;
     } catch (error) {
       let msg = error?.response?.data?.msg || error?.response?.data?.error || error?.message || "unknown error when fetching data";
       throw new Error(msg);
@@ -65,6 +65,7 @@ export const useSystemAPI = () => {
       const result = await axiosClient.delete(`${TARGET_SYSTEM}${url}`, config);
       return result.data;
     } catch (error) {
+      console.error(error)
       let msg = error?.response?.data?.msg || error?.response?.data?.error || error?.message || "unknown error when deleting data";
       throw new Error(msg);
     } finally {

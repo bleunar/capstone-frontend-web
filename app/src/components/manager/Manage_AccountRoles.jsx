@@ -63,7 +63,7 @@ export default function AccountRolesManagement() {
             const result = await API_GET(`/${TARGET_ENTITY}/`)
             setData(result)
         } catch (error) {
-            notifyError(`failed to fetch ${TARGET_ENTITY} data`)
+            console.error(error)
         }
     }
 

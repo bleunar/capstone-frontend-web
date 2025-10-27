@@ -63,7 +63,7 @@ export default function LocationsManagement() {
             const result = await API_GET(`/${TARGET_ENTITY}/`)
             setData(result)
         } catch (error) {
-            notifyError(`failed to fetch ${TARGET_ENTITY} data`)
+            console.error(error)
         }
     }
 
@@ -97,7 +97,6 @@ export default function LocationsManagement() {
                         {
                             <FormsAdd_Locations refetch_data={handleFetchData} />
                         }
-
                     </div>
                 </div>
 

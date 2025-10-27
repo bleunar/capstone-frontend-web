@@ -24,7 +24,7 @@ export default function useNotificationSounds() {
     const audio = audioMap.current[type];
     if (!audio) return;
     audio.currentTime = 0; // restart from beginning
-    audio.play();
+    // audio.play();
   };
 
   return { play };

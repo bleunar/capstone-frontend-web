@@ -110,7 +110,7 @@ export const FormsDelete_Accounts = ({ target_id, target_name = "", refetch_data
             setParentShowModal(false);
             refetch_data();
         } catch (error) {
-            notifyError(`${error.message}`);
+            notifyError(error)
         }
     };
 
@@ -178,7 +178,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             refetch_data();
             setShowModal(false);
         } catch (error) {
-            notifyError(`${error.message}`);
+            notifyError(error)
         }
     };
 
@@ -190,7 +190,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             setData(BASE_OBJECT);
             notifyConfirm(`${TARGET_NAME} added successfuly`)
         } catch (error) {
-            notifyError(`${error.message}`)
+            notifyError(error)
         }
     };
 
@@ -211,7 +211,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`);
             setData(result[0]);
         } catch (error) {
-            notifyError(`Failed to fetch ${TARGET_NAME} data`, error);
+            console.error(`Failed to fetch ${TARGET_NAME} data`, error);
         }
     };
 
@@ -221,7 +221,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             const result = await API_GET("/account_roles")
             setExtraData({ ...extraData, account_roles: result })
         } catch (error) {
-            notifyError(`Failed to fetch extra data for ${TARGET_NAME}`, error)
+            console.error(`Failed to fetch extra data for ${TARGET_NAME}`, error)
         }
     }
 
@@ -423,7 +423,7 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`)
             setData(result[0])
         } catch (error) {
-            notifyError(`Failed to fetch ${TARGET_NAME}`), error
+            console.error(`Failed to fetch ${TARGET_NAME}`), error
         }
     };
 

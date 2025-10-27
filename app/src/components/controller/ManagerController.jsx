@@ -18,10 +18,6 @@ export default function ManagerController() {
                                         Accounts
                                     </div>
                                     <ul className="list-group text-start list-group-flush">
-                                        <Link to="./lab/overview" className="list-group-item d-flex justify-content-between flex-fill">
-                                            <div className="p">Overview</div>
-                                            <i className="bi bi-chevron-right"></i>
-                                        </Link>
 
                                         <ComponentProtector required_access_level={[0,1]}
                                             component={
@@ -62,11 +58,6 @@ export default function ManagerController() {
                                 Manage Computer Laboratory
                             </div>
                             <ul className="list-group text-start list-group-flush">
-                                <Link to="./lab/overview" className="list-group-item d-flex justify-content-between flex-fill">
-                                    <div className="p">Overview</div>
-                                    <i className="bi bi-chevron-right"></i>
-                                </Link>
-
                                 <Link to="./lab/" className="list-group-item d-flex justify-content-between flex-fill">
                                     <div className="p">Locations</div>
                                     <i className="bi bi-chevron-right"></i>
@@ -86,17 +77,12 @@ export default function ManagerController() {
                     </div>
 
 
-                    <div className="col p-2">
+                    <div className="col p-2 d-none">
                         <div className="card">
                             <div className="card-header fw-bold text-center bg-body-tertiary">
                                 Manage Tickets
                             </div>
                             <ul className="list-group text-start list-group-flush">
-                                <Link to="./lab/overview" className="list-group-item d-flex justify-content-between flex-fill">
-                                    <div className="p">Overview</div>
-                                    <i className="bi bi-chevron-right"></i>
-                                </Link>
-
                                 <Link to="./lab/" className="list-group-item d-flex justify-content-between flex-fill">
                                     <div className="p">Ticket Management</div>
                                     <i className="bi bi-chevron-right"></i>

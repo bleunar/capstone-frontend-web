@@ -39,7 +39,7 @@ export default function ItemVisualizer({ data, mode = "list", card_content, list
     }
 
     return (
-        <div className="col">
+        <div className="col p-1">
             <div className="card shadow h-100">
                 <div className="card-body">
                     {

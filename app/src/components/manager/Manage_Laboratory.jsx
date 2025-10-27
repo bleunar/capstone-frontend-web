@@ -5,6 +5,7 @@ import ReturnButton from "../general/ReturnButton";
 import FormModal from "../general/FormModal";
 import { useNotifications } from "../../context/NotificationContext";
 import { FormsAdd_Locations } from "../forms/Forms_Locations";
+import { KPICounter } from "../visualizer/KPICounter";
 
 export default function LabManagement() {
     const { API_GET } = useSystemAPI();
@@ -36,7 +37,10 @@ export default function LabManagement() {
             <div className="container-fluid">
                 <div className="d-flex justify-content-between align-items-start">
                     <div className="h2 fw-bold mb-3">Manage Computer Laboratory</div>
-                    <AddEquipmentsModal locations={locations} />
+                    <div className="d-flex gap-2">
+                        <AddEquipmentsModal locations={locations} />
+                        <FormsAdd_Locations mode="button" refetch_data={FetchLocations} />
+                    </div>
                 </div>
 
                 <div className="d-flex justify-content-between mb-3 flex-wrap-reverse">
@@ -55,7 +59,6 @@ export default function LabManagement() {
                             </li>
                         ))}
                         <li>
-                            <FormsAdd_Locations mode="button" refetch_data={FetchLocations} />
                         </li>
                     </ul>
                 </div>
@@ -72,11 +75,9 @@ export default function LabManagement() {
                             tabIndex="1"
                         >
                             <div className="container-fluid">
-                                <div className="row row-cols-1 row-cols-sm-2 row-cols-xl-4 row-cols-xxl-5">
                                     {activeTab === item.id && (
                                         <LabEquipments location_id={item.id} current_active_tab={activeTab} />
                                     )}
-                                </div>
                             </div>
                         </div>
                     ))}
@@ -91,7 +92,7 @@ function LabEquipments({ location_id, current_active_tab }) {
     const [loading, setLoading] = useState(false)
     const [equipmentSets, setEquipmentSets] = useState([]);
     const { API_GET } = useSystemAPI();
-    const {notifyError} = useNotifications()
+    const { notifyError } = useNotifications()
 
     async function FetchEquipmentSets() {
         try {
@@ -100,7 +101,7 @@ function LabEquipments({ location_id, current_active_tab }) {
             );
             setEquipmentSets(result);
         } catch (error) {
-            notifyError(error)
+            console.error(error)
         } finally {
             setLoading(false)
         }
@@ -128,24 +129,35 @@ function LabEquipments({ location_id, current_active_tab }) {
 
     return (
         <>
-            {
-                equipmentSets && equipmentSets.map((item, key) => (
-                    <Item_EquipmentSet key={key} target_id={item.equipment_set_id} display_data={item} refresh_parent={Refresh} />
-                ))
-            }
+            <div className="container-fluid">
+                <div className="row row-cols-2">
+                        <KPICounter title="Total Equipments" type="primary" source={`/equipment_sets/analytics/total/location/${location_id}`} />
+                        <KPICounter title="With Issues" type="primary" source={`/equipment_sets/analytics/issues/total/location/${location_id}`} />
+                </div>
+            </div>
 
-            {
-                equipmentSets && equipmentSets.length == 0 && (
-                    <div className="text-center w-100">No Items</div>
-                )
-            }
+            <hr />
+
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-xl-4 row-cols-xxl-5">
+                {
+                    equipmentSets && equipmentSets.map((item, key) => (
+                        <Item_EquipmentSet key={key} target_id={item.equipment_set_id} display_data={item} refresh_parent={Refresh} />
+                    ))
+                }
+
+                {
+                    equipmentSets && equipmentSets.length == 0 && (
+                        <div className="text-center w-100">No Items</div>
+                    )
+                }
+            </div>
         </>
     );
 }
 
 
 
-function AddEquipmentsModal({locations}) {
+function AddEquipmentsModal({ locations }) {
     const [showModal, setShowModal] = useState(false);
 
     function HandleCloseParentModal() {
@@ -198,24 +210,24 @@ function AddEquipmentsModal({locations}) {
 
 const BASE_SINGLE_EQUIPMENT = {
     location_id: '',
-    name: '',
-    system_unit_name: '',
-    monitor_name: '',
-    keyboard_name: '',
-    mouse_name: '',
-    avr_name: '',
-    headset_name: '',
+    name: 'PC #',
+    system_unit_name: 'System Unit',
+    monitor_name: 'Monitor',
+    keyboard_name: 'Keyboard',
+    mouse_name: 'Mouse',
+    avr_name: 'AVR Unit',
+    headset_name: 'Headset Unit',
     plugged_power_cable: '',
     plugged_display_cable: '',
     requires_avr: '',
     requires_headset: '',
 }
 
-function AddSingleEquipment({locations, closeModal}){
+function AddSingleEquipment({ locations, closeModal }) {
     const [newEquipment, setNewEquipment] = useState(BASE_SINGLE_EQUIPMENT)
     const [errorMessage, setErrorMessage] = useState("");
-    const {API_POST} = useSystemAPI()
-    const {notifyConfirm, notifyError} = useNotifications()
+    const { API_POST } = useSystemAPI()
+    const { notifyConfirm, notifyError } = useNotifications()
 
 
     const HandleInputChange = (e) => {
@@ -251,9 +263,13 @@ function AddSingleEquipment({locations, closeModal}){
             notifyConfirm("Success")
             closeModal()
         } catch (error) {
-            notifyError(error);
+            console.error(error);
         }
     }
+
+    useEffect(() => {
+        setNewEquipment({...newEquipment, "name": newEquipment.name.toUpperCase()})
+    }, [newEquipment?.name])
 
     return (
         <>
@@ -288,15 +304,11 @@ function AddSingleEquipment({locations, closeModal}){
                 </div>
 
 
-
-
-                                    <div className="mb-3 text-start">
-                                        <button class="btn btn-outline-primary btn-sm " type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                                            Set Default Values
-                                        </button>
-                                    </div>
-
-
+                <div className="mb-3 text-start">
+                    <button class="btn btn-outline-secondary btn-sm " type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                        Set Default Values
+                    </button>
+                </div>
 
 
                 <div class="collapse" id="collapseExample">
@@ -323,29 +335,29 @@ function AddSingleEquipment({locations, closeModal}){
                                     </div>
                                 </div>
                                 <div class="col p-1">
-                                    <label for="system_unit_name" class="form-label">System Unit Name</label>
+                                    <label for="system_unit_name" class="form-label">System Unit Brand/Model</label>
                                     <input type="text" class="form-control" id="system_unit_name" name="system_unit_name" value={newEquipment.system_unit_name} onChange={HandleInputChange} />
                                 </div>
 
                                 <div class="col p-1">
-                                    <label for="monitor_name" class="form-label">Monitor Name</label>
+                                    <label for="monitor_name" class="form-label">Monitor Brand/Model</label>
                                     <input type="text" class="form-control" id="monitor_name" name="monitor_name" value={newEquipment.monitor_name} onChange={HandleInputChange} />
                                 </div>
 
                                 <div class="col p-1">
-                                    <label for="equipment_set_nakeyboard_nameme" class="form-label">Keyboard Name</label>
+                                    <label for="equipment_set_nakeyboard_nameme" class="form-label">Keyboard Brand/Model</label>
                                     <input type="text" class="form-control" id="keyboard_name" name="keyboard_name" value={newEquipment.keyboard_name} onChange={HandleInputChange} />
                                 </div>
 
                                 <div class="col p-1">
-                                    <label for="mouse_name" class="form-label">Mouse Name</label>
+                                    <label for="mouse_name" class="form-label">Mouse Brand/Model</label>
                                     <input type="text" class="form-control" id="mouse_name" name="mouse_name" value={newEquipment.mouse_name} onChange={HandleInputChange} />
                                 </div>
 
                                 {
                                     newEquipment.requires_avr && (
                                         <div class="col p-1">
-                                            <label for="avr_name" class="form-label">AVR Unit Name</label>
+                                            <label for="avr_name" class="form-label">AVR Unit Brand/Model</label>
                                             <input type="text" class="form-control" id="avr_name" name="avr_name" value={newEquipment.avr_name} onChange={HandleInputChange} />
                                         </div>
                                     )
@@ -354,7 +366,7 @@ function AddSingleEquipment({locations, closeModal}){
                                 {
                                     newEquipment.requires_headset && (
                                         <div class="col p-1">
-                                            <label for="headset_name" class="form-label">Headset Unit Name</label>
+                                            <label for="headset_name" class="form-label">Headset Unit Brand/Model</label>
                                             <input type="text" class="form-control" id="headset_name" name="headset_name" value={newEquipment.headset_name} onChange={HandleInputChange} />
                                         </div>
                                     )
@@ -384,14 +396,14 @@ function AddSingleEquipment({locations, closeModal}){
 // ------------------
 const BASE_BATCH_EQUIPMENT = {
     location_id: '',
-    prefix: 'PC #',
-    count: '8',
-    system_unit_name: '',
-    monitor_name: '',
-    keyboard_name: '',
-    mouse_name: '',
-    avr_name: '',
-    headset_name: '',
+    prefix: 'PC ',
+    count: '5',
+    system_unit_name: 'System Unit',
+    monitor_name: 'Monitor',
+    keyboard_name: 'Keyboard',
+    mouse_name: 'Mouse',
+    avr_name: 'AVR Unit',
+    headset_name: 'Headset Unit',
     plugged_power_cable: '',
     plugged_display_cable: '',
     requires_avr: '',
@@ -442,6 +454,10 @@ function AddBatchEquipment({ locations, closeModal }) {
         }
     }
 
+    useEffect(() => {
+        setNewEquipments({...newEquipments, "prefix": newEquipments.prefix.toUpperCase()})
+    }, [newEquipments?.prefix])
+
     return (
         <>
             <div className="container-fluid">
@@ -488,6 +504,7 @@ function AddBatchEquipment({ locations, closeModal }) {
                         <input
                             type="number"
                             min={1}
+                            max={50}
                             className="form-control"
                             id="count"
                             name="count"
@@ -497,10 +514,24 @@ function AddBatchEquipment({ locations, closeModal }) {
                     </div>
                 </div>
 
+                {/* Default Values Section */}
+                <div className="mb-3 text-start">
+                    <button
+                        className="btn btn-outline-secondary btn-sm"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseExample"
+                        aria-expanded="false"
+                        aria-controls="collapseExample"
+                    >
+                        Set Default Values
+                    </button>
+                </div>
+
                 {/* Preview Section */}
                 <div className="p-3 my-3 rounded bg-body-tertiary">
                     <div className="text-muted text-nowrap mb-3 text-center">
-                        This will create {newEquipments.count || 0} number of Equipments:
+                        This will create {newEquipments.count || 0} counts of Equipments:
                     </div>
                     <div className="d-flex gap-2 align-items-center flex-wrap justify-content-center">
                         {Array.from({ length: newEquipments.count || 0 }).map((_, i) => (
@@ -512,19 +543,6 @@ function AddBatchEquipment({ locations, closeModal }) {
                     </div>
                 </div>
 
-                {/* Default Values Section */}
-                <div className="mb-3 text-start">
-                    <button
-                        className="btn btn-outline-primary btn-sm"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseExample"
-                        aria-expanded="false"
-                        aria-controls="collapseExample"
-                    >
-                        Set Default Values
-                    </button>
-                </div>
 
                 <div className="collapse" id="collapseExample">
                     <div className="mb-3">
@@ -566,7 +584,7 @@ function AddBatchEquipment({ locations, closeModal }) {
 
                                 <div className="col p-1">
                                     <label htmlFor="system_unit_name" className="form-label">
-                                        System Unit Name
+                                        System Unit Brand/Model
                                     </label>
                                     <input
                                         type="text"
@@ -580,7 +598,7 @@ function AddBatchEquipment({ locations, closeModal }) {
 
                                 <div className="col p-1">
                                     <label htmlFor="monitor_name" className="form-label">
-                                        Monitor Name
+                                        Monitor Brand/Model
                                     </label>
                                     <input
                                         type="text"
@@ -594,7 +612,7 @@ function AddBatchEquipment({ locations, closeModal }) {
 
                                 <div className="col p-1">
                                     <label htmlFor="keyboard_name" className="form-label">
-                                        Keyboard Name
+                                        Keyboard Brand/Model
                                     </label>
                                     <input
                                         type="text"
@@ -608,7 +626,7 @@ function AddBatchEquipment({ locations, closeModal }) {
 
                                 <div className="col p-1">
                                     <label htmlFor="mouse_name" className="form-label">
-                                        Mouse Name
+                                        Mouse Brand/Model
                                     </label>
                                     <input
                                         type="text"
@@ -623,7 +641,7 @@ function AddBatchEquipment({ locations, closeModal }) {
                                 {newEquipments.requires_avr && (
                                     <div className="col p-1">
                                         <label htmlFor="avr_name" className="form-label">
-                                            AVR Unit Name
+                                            AVR Unit Brand/Model
                                         </label>
                                         <input
                                             type="text"
@@ -639,7 +657,7 @@ function AddBatchEquipment({ locations, closeModal }) {
                                 {newEquipments.requires_headset && (
                                     <div className="col p-1">
                                         <label htmlFor="headset_name" className="form-label">
-                                            Headset Unit Name
+                                            Headset Unit Brand/Model
                                         </label>
                                         <input
                                             type="text"

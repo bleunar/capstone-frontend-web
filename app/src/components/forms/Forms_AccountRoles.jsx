@@ -101,7 +101,7 @@ export const FormsDelete_AccountRoles = ({ target_id, target_name = "", refetch_
             setParentShowModal(false);
             refetch_data();
         } catch (error) {
-            notifyError(`${error.message}`);
+            notifyError(error)
         }
     };
 
@@ -169,7 +169,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             refetch_data();
             setShowModal(false);
         } catch (error) {
-            notifyError(`${error.message}`);
+            notifyError(error)
         }
     };
 
@@ -181,7 +181,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             setData(BASE_OBJECT);
             notifyConfirm(`${TARGET_NAME} added successfuly`)
         } catch (error) {
-            notifyError(`${error.message}`)
+            notifyError(error)
         }
     };
 
@@ -201,7 +201,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`);
             setData(result[0]);
         } catch (error) {
-            notifyError(`${error.message}`);
+            console.error(error)
         }
     };
 
@@ -211,7 +211,7 @@ const FormsInputField = ({ target_id, submitMode = "add", showModal, setShowModa
             const result = await API_GET("/access_levels")
             setExtraData({ ...extraData, access_levels: result })
         } catch (error) {
-            notifyError(`${error.message}`)
+            console.error(error)
         }
     }
 
@@ -287,7 +287,7 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
             const result = await API_GET(`/${TARGET_ENTITY}?id=${target_id}`)
             setData(result[0])
         } catch (error) {
-            notifyError(`${error.message}`)
+            console.error(error)
         }
     };
 
@@ -298,7 +298,7 @@ const FormsView = ({ target_id, refetch_data, setShowModal }) => {
             const result = await API_GET(`/access_levels?id=${data.access_level}`)
             setExtraData({ ...extraData, access_level: result })
         } catch (error) {
-            notifyError(`${error.message}`)
+            console.error(error)
         }
     }
 
@@ -356,7 +356,7 @@ export const ItemVisualizerContent_AccountRoles = ({ data, mode = "list" }) => {
             const result = await API_GET(`/access_levels?id=${data.access_level}`)
             setExtraData({ ...extraData, access_level: result })
         } catch (error) {
-            notifyError(`${error.message}`)
+            console.error(error)
         }
     }
 
