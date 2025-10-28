@@ -17,6 +17,7 @@ import AccountRolesManagement from './components/manager/Manage_AccountRoles.jsx
 import History_Accounts from './components/manager/History_Accounts.jsx';
 import OverviewAccounts from './components/visualizer/overview/Overview_Accounts.jsx';
 import LocationsManagement from './components/manager/Manage_Locations.jsx';
+import LandingPage from './pages/Landing.jsx';
 
 function App() {
   const { initialized } = useAuth();
@@ -30,7 +31,7 @@ function App() {
       <Routes>
         <Route path="/"
           element={
-            <LoginPage />
+            <LandingPage />
           }
         />
 

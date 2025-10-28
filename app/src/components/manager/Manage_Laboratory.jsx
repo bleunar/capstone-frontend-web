@@ -38,7 +38,7 @@ export default function LabManagement() {
                 <div className="d-flex justify-content-between align-items-start">
                     <div className="h2 fw-bold mb-3">Manage Computer Laboratory</div>
                     <div className="d-flex gap-2">
-                        <AddEquipmentsModal locations={locations} />
+                        <AddEquipmentsModal locations={locations} refresh_parent={FetchLocations} />
                         <FormsAdd_Locations mode="button" refetch_data={FetchLocations} />
                     </div>
                 </div>
@@ -129,14 +129,14 @@ function LabEquipments({ location_id, current_active_tab }) {
 
     return (
         <>
-            <div className="container-fluid">
+            <hr />
+
+            <div className="container-fluid mb-3">
                 <div className="row row-cols-2">
                         <KPICounter title="Total Equipments" type="primary" source={`/equipment_sets/analytics/total/location/${location_id}`} />
                         <KPICounter title="With Issues" type="primary" source={`/equipment_sets/analytics/issues/total/location/${location_id}`} />
                 </div>
             </div>
-
-            <hr />
 
             <div className="row row-cols-1 row-cols-sm-2 row-cols-xl-4 row-cols-xxl-5">
                 {
@@ -157,7 +157,7 @@ function LabEquipments({ location_id, current_active_tab }) {
 
 
 
-function AddEquipmentsModal({ locations }) {
+function AddEquipmentsModal({ locations, refresh_parent }) {
     const [showModal, setShowModal] = useState(false);
 
     function HandleCloseParentModal() {
@@ -193,11 +193,11 @@ function AddEquipmentsModal({ locations }) {
 
                         <div class="tab-content mt-3" id="myTabContent">
                             <div class="tab-pane fade show active" id="single_panel" role="tabpanel" aria-labelledby="tab1-tab">
-                                <AddSingleEquipment locations={locations} closeModal={HandleCloseParentModal} />
+                                <AddSingleEquipment locations={locations} closeModal={HandleCloseParentModal} refresh_parent={refresh_parent} />
                             </div>
 
                             <div class="tab-pane fade" id="multi_panel" role="tabpanel" aria-labelledby="tab2-tab">
-                                <AddBatchEquipment locations={locations} closeModal={HandleCloseParentModal} />
+                                <AddBatchEquipment locations={locations} closeModal={HandleCloseParentModal} refresh_parent={refresh_parent} />
                             </div>
                         </div>
 
@@ -223,7 +223,7 @@ const BASE_SINGLE_EQUIPMENT = {
     requires_headset: '',
 }
 
-function AddSingleEquipment({ locations, closeModal }) {
+function AddSingleEquipment({ locations, closeModal, refresh_parent }) {
     const [newEquipment, setNewEquipment] = useState(BASE_SINGLE_EQUIPMENT)
     const [errorMessage, setErrorMessage] = useState("");
     const { API_POST } = useSystemAPI()
@@ -262,6 +262,7 @@ function AddSingleEquipment({ locations, closeModal }) {
             API_POST("/equipment_sets/single", newEquipment)
             notifyConfirm("Success")
             closeModal()
+            refresh_parent()
         } catch (error) {
             console.error(error);
         }
@@ -410,7 +411,7 @@ const BASE_BATCH_EQUIPMENT = {
     requires_headset: '',
 }
 
-function AddBatchEquipment({ locations, closeModal }) {
+function AddBatchEquipment({ locations, closeModal, refresh_parent }) {
     const [newEquipments, setNewEquipments] = useState(BASE_BATCH_EQUIPMENT);
     const [errorMessage, setErrorMessage] = useState("");
     const { API_POST } = useSystemAPI();
@@ -449,6 +450,7 @@ function AddBatchEquipment({ locations, closeModal }) {
             await API_POST("/equipment_sets/batch", newEquipments);
             notifyConfirm("Success");
             closeModal();
+            refresh_parent();
         } catch (error) {
             notifyError(error);
         }

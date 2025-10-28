@@ -7,7 +7,6 @@ import { MdCable } from "react-icons/md";
 import { LuCable } from "react-icons/lu";
 import { MdNetworkCheck } from "react-icons/md";
 import { MdSignalCellularAlt } from "react-icons/md";
-import { PiComputerTowerFill } from "react-icons/pi";
 
 const BASE_OBJECT = {
     id: "",
@@ -255,7 +254,7 @@ export default function Item_EquipmentSet({ target_id, display_data, refresh_par
                     </div>
 
                     <div className="p-2 d-flex position-absolute top-0 end-0 hover-show-client" onClick={HandleDelete}>
-                        <div className="btn btn-outline-primary text-danger btn-sm border-0">
+                        <div className="btn btn-primary btn-sm">
                             <i class="bi bi-trash3-fill"></i>
                         </div>
                     </div>
@@ -701,9 +700,8 @@ const checkEquipmentSetIssues = (data) => {
     }
 
 
-    // Performance
+    // Issue Comments
 
-    console.log(data?.issue)
     const hasIssue = data.issue !== null && data.issue !== '';
 
     allIcons.push(

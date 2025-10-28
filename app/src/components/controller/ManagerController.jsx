@@ -67,11 +67,6 @@ export default function ManagerController() {
                                     <div className="p">Equipments</div>
                                     <i className="bi bi-chevron-right"></i>
                                 </Link>
-
-                                <Link to="./lab/activities" className="list-group-item d-flex justify-content-between flex-fill">
-                                    <div className="p">Activities</div>
-                                    <i className="bi bi-chevron-right"></i>
-                                </Link>
                             </ul>
                         </div>
                     </div>

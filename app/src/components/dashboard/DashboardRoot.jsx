@@ -25,46 +25,7 @@ export default function DashboardRoot() {
 
                 <div className="container-fluid mb-3">
                     <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3">
-                        <div className="col p-2">
-                            <div className="card h-100">
-                                <div className="card-header fw-bold text-center bg-body-tertiary">
-                                    Quick Actions
-                                </div>
-                                <ul className="list-group text-start list-group-flush">
-                                    
-                                    <Link to="/dashboard/manage/accounts/roles" className="list-group-item d-flex justify-content-between flex-fill">
-                                        <div className="p">Manage Roles</div>
-                                        <i className="bi bi-chevron-right"></i>
-                                    </Link>
 
-                                    <Link to="/dashboard/manage/accounts" className="list-group-item d-flex justify-content-between flex-fill">
-                                        <div className="p">Manage Accounts</div>
-                                        <i className="bi bi-chevron-right"></i>
-                                    </Link>
-
-                                    <Link to="/dashboard/manage/lab" className="list-group-item d-flex justify-content-between flex-fill">
-                                        <div className="p">Manage Laboratory</div>
-                                        <i className="bi bi-chevron-right"></i>
-                                    </Link>
-
-                                    <Link to="/dashboard/manage/lab/equipments" className="list-group-item d-flex justify-content-between flex-fill">
-                                        <div className="p">Manage Equipments</div>
-                                        <i className="bi bi-chevron-right"></i>
-                                    </Link>
-
-                                    <ComponentProtector required_access_level={[0, 1]}
-                                        component={
-                                            (
-                                                <Link to="/dashboard/manage/accounts/activities" className="list-group-item d-flex justify-content-between flex-fill">
-                                                    <div className="p">Account Activities</div>
-                                                    <i className="bi bi-chevron-right"></i>
-                                                </Link>
-                                            )
-                                        }
-                                    />
-                                </ul>
-                            </div>
-                        </div>
 
                         <BarVisualizer title="Equipment per Location" source="/analytics/bar/equipment/location" />
                         <PieVisualizer title="Equipment Issue Ratio" source="/analytics/pie/equipment/issues-ratio" />

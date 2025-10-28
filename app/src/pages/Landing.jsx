@@ -1,40 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
+import { useNotifications } from "../context/NotificationContext";
+import Logo from '../assets/img/claims-name-white.png'
 
 function LandingPage() {
-  const navigate = useNavigate();
-  const [loginEmail, setLoginEmail] = useState("");
+  const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const { login, authLoading, authenticated } = useAuth()
+  const { notifyConfirm, notifyError } = useNotifications()
+  const nav = useNavigate()
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  // login function
+  const HandleLogin = async (e) => {
+    e.preventDefault()
     try {
-      const res = await fetch("http://127.0.0.1:5000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          data: { email: loginEmail, password: loginPassword },
-        }),
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        if (data.user.role !== "Admin") {
-          alert("Only Admins can log in.");
-          return;
-        }
-        localStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/admin");
-      } else {
-        alert(data.msg || "Login failed");
-      }
-    } catch (err) {
-      alert("Login failed: " + err.message);
+      await login(loginUsername, loginPassword)
+      notifyConfirm("Logged In!")
+    } catch (error) {
+      notifyError(error)
     }
-  };
+  }
+
+  // on component load, check if authenticated. navigate to dashbaord if authenticated
+  useEffect(() => {
+    if (authenticated) {
+      nav("/dashboard")
+    }
+  }, [authenticated])
 
   return (
     <div
@@ -51,7 +50,7 @@ function LandingPage() {
   
       <div
         style={{
-          backgroundImage: "url('/img/uibg.jpg')",
+          backgroundImage: "url('pui.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -94,7 +93,7 @@ function LandingPage() {
       >
         <div className="d-flex justify-content-center mb-3">
           <img
-            src="/img/black.png"
+            src={Logo}
             alt="Claims Logo"
             style={{
               width: "150px",
@@ -102,16 +101,6 @@ function LandingPage() {
             }}
           />
         </div>
-        <h2
-          className="fw-bold mb-2"
-          style={{
-            color: "white",
-            letterSpacing: "2px",
-            textShadow: "1px 1px 3px rgba(0,0,0,0.3)",
-          }}
-        >
-          CLAIMS
-        </h2>
 
         <p
           style={{
@@ -123,13 +112,13 @@ function LandingPage() {
           Please log in to continue.
         </p>
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={HandleLogin}>
           <input
-            type="email"
+            type="text"
             className="form-control mb-3"
-            placeholder="Email"
-            value={loginEmail}
-            onChange={(e) => setLoginEmail(e.target.value)}
+            placeholder="Username"
+            value={loginUsername}
+            onChange={(e) => setLoginUsername(e.target.value)}
             required
             style={{
               borderColor: "#FFCC00",
@@ -190,18 +179,6 @@ function LandingPage() {
             Login
           </button>
 
-          <p
-            className="mt-2"
-            style={{
-              cursor: "pointer",
-              color: "white",
-              textDecoration: "underline",
-              fontSize: "0.9rem",
-            }}
-            onClick={() => navigate("/forgot-password")}
-          >
-            Forgot Password?
-          </p>
         </form>
       </div>
 

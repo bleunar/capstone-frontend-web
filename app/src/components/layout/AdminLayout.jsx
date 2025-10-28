@@ -161,9 +161,9 @@ function Sidebar({ expanded }) {
                         </div>
 
                         <Link
-                            to="/settings"
+                            to="/dashboard/settings"
                             className={`btn border-0 ${
-                                isActive("/settings")
+                                isActive("/dashboard/settings")
                                     ? "btn-light text-primary fw-bold"
                                     : "btn-outline-secondary text-white"
                             }`}
@@ -238,7 +238,7 @@ function MobileSidebar({ show, onClose }) {
                         </li>
                         <li className="nav-item">
                             <Link
-                                to="./labs"
+                                to="/dashboard/labs"
                                 className="nav-link text-white"
                                 onClick={onClose}
                             >
@@ -247,7 +247,7 @@ function MobileSidebar({ show, onClose }) {
                         </li>
                         <li className="nav-item">
                             <Link
-                                to="./activities"
+                                to="/dashboard/activities"
                                 className="nav-link text-white"
                                 onClick={onClose}
                             >
@@ -256,7 +256,7 @@ function MobileSidebar({ show, onClose }) {
                         </li>
                         <li className="nav-item">
                             <Link
-                                to="./manage"
+                                to="/dashboard/manage"
                                 className="nav-link text-white"
                                 onClick={onClose}
                             >
@@ -319,7 +319,7 @@ function Navbar({ onToggleSidebar, onToggleOffcanvas }) {
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
-                                <Link class="dropdown-item" to="./settings">
+                                <Link class="dropdown-item" to="/dashboard/settings">
                                     Settings
                                 </Link>
                             </li>

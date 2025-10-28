@@ -13,8 +13,6 @@ export default function SimplyList({ title = "", source }) {
         try {
             const result = await API_GET(source);
 
-            console.log(result);
-
             // Expected format: { columns: [...], data: [...] }
             if (result?.columns && result?.data) {
                 setColumns(result.columns);
